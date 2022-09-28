@@ -11,8 +11,11 @@
         <span>{{ lives }}</span>
       </div>
     </div>
-    <div v-if="lives == 0" class="flex justify-center">
-      <p class="bg-red-500 text-white text-8xl p-8">fin</p>
+    <div v-if="lives == 0">
+      <div class="grid justify-items-center">
+        <p class="bg-red-500 text-white text-8xl p-8">fin</p>
+        <history-table class="m-6" />
+      </div>
     </div>
     <div v-else>
       <div class="flex justify-center m-8">
@@ -57,18 +60,24 @@
 </template>
 
 <script>
+import HistoryTable from "./components/HistoryTable.vue";
 import { useIndexStore } from "./store";
 
 export default {
-  data: () => ({}),
+  components: { HistoryTable },
   methods: {
     commitSeen() {
-      useIndexStore().commitSeen();
-      useIndexStore().updateCurrentWord();
+      if (useIndexStore().commitSeen()) {
+        useIndexStore().updateCurrentWord();
+      }
     },
     commitNew() {
-      useIndexStore().commitNew();
-      useIndexStore().updateCurrentWord();
+      if (useIndexStore().commitNew()) {
+        useIndexStore().updateCurrentWord();
+      }
+    },
+    reset() {
+      useIndexStore().$reset();
     },
   },
   computed: {
