@@ -14,6 +14,10 @@
     <div v-if="lives == 0">
       <div class="grid justify-items-center">
         <p class="bg-red-500 text-white text-8xl p-8">fin</p>
+        <gradient-button class="m-6 px-5" @click="reset"
+          ><reset-arrow class="w-5 mr-2 mb-1 inline" />encore une
+          fois</gradient-button
+        >
         <history-table class="m-6" />
       </div>
     </div>
@@ -23,36 +27,8 @@
       </div>
       <div class="flex justify-center">
         <div class="grid gap-4 grid-cols-2">
-          <button
-            class="
-              p-2
-              text-lg
-              border-2
-              text-white
-              bg-gradient-to-t
-              from-blue-500
-              to-cyan-500
-              hover:from-pink-500 hover:to-yellow-500
-            "
-            @click="commitSeen"
-          >
-            déjà vu
-          </button>
-          <button
-            class="
-              p-2
-              text-lg
-              border-2
-              text-white
-              bg-gradient-to-t
-              from-blue-500
-              to-cyan-500
-              hover:from-pink-500 hover:to-yellow-500
-            "
-            @click="commitNew"
-          >
-            nouveau
-          </button>
+          <gradient-button @click="commitSeen">déjà vu</gradient-button>
+          <gradient-button @click="commitNew">nouveau</gradient-button>
         </div>
       </div>
     </div>
@@ -61,10 +37,12 @@
 
 <script>
 import HistoryTable from "./components/HistoryTable.vue";
+import GradientButton from "./components/GradientButton.vue";
+import ResetArrow from "./assets/ResetArrow.vue";
 import { useIndexStore } from "./store";
 
 export default {
-  components: { HistoryTable },
+  components: { HistoryTable, GradientButton, ResetArrow },
   methods: {
     commitSeen() {
       if (useIndexStore().commitSeen()) {
@@ -78,6 +56,7 @@ export default {
     },
     reset() {
       useIndexStore().$reset();
+      useIndexStore().updateCurrentWord();
     },
   },
   computed: {
