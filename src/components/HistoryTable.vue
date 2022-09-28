@@ -1,5 +1,11 @@
 <template>
   <div>
+    <div class="grid grid-cols-8 gap-4">
+      <span>première</span>
+      <div class="col-span-5"></div>
+      <span class="justify-self-center">déjà vu</span>
+      <span class="justify-self-center">nouveau</span>
+    </div>
     <history-table-row
       v-for="entry in entries"
       :key="entry.index"

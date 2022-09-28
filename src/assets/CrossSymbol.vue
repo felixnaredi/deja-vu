@@ -23,7 +23,7 @@ export default {};
 
 .cls-2 {
   fill: none;
-  stroke: #fff;
+  stroke: rgb(254 242 242);
   stroke-miterlimit: 10;
   stroke-width: 16px;
 }

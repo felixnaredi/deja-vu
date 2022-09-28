@@ -1,8 +1,11 @@
 <template>
-  <div class="grid grid-cols-10 gap-4 border-b-2">
-    <div>{{ actuallyUnseen ? "+" : "" }}</div>
-    <div class="col-span-7">{{ entry.value }}</div>
-    <div>
+  <div
+    class="grid grid-cols-8 gap-4 border-b-2"
+    :class="{ 'bg-red-50': incorrect }"
+  >
+    <div class="justify-self-center">{{ actuallyUnseen ? "+" : "" }}</div>
+    <div class="col-span-5 ml-4">{{ entry.value }}</div>
+    <div class="justify-self-end">
       <div v-if="!answeredUnseen" class="h-full">
         <tick-symbol v-if="correct" class="w-5 h-full" />
         <cross-symbol v-else class="w-5 h-full" />
@@ -36,6 +39,9 @@ export default {
     },
     correct() {
       return this.entry.actualState == this.entry.answeredState;
+    },
+    incorrect() {
+      return !this.correct;
     },
   },
 };
