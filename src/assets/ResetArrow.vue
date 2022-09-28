@@ -1,11 +1,6 @@
 <template>
-  <svg
-    id="Lager_2"
-    data-name="Lager 2"
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 116.69 116.91"
-  >
-    <g id="Lager_1-2" data-name="Lager 1">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 116.91 116.91">
+    <g>
       <g>
         <path
           class="cls-1"
