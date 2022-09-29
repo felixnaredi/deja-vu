@@ -27,7 +27,11 @@ export function popRandom<T>(array: Array<T>): null | T {
   } else {
     const i = Math.floor(Math.random() * array.length);
     const x = array[i];
-    array[i] = array.pop()!;
+    if (i < array.length - 1) {
+      array[i] = array.pop()!;
+    } else {
+      array.pop();
+    }
     return x;
   }
 }
