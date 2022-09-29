@@ -57,4 +57,21 @@ describe("WordSampler", () => {
       previous = sampler.next();
     }
   });
+
+  it("should be true for seen elements and false for unseen", () => {
+    const sampler = new WordSampler(
+      Array.from(new Array(128)).map((_, index) => index),
+      0.5
+    );
+    const seen = new Set();
+
+    for (let i = 0; i < 128; i++) {
+      seen.add(sampler.next());
+    }
+    sampler.next();
+
+    for (let i = 0; i < 128; i++) {
+      expect(seen.has(i)).to.equal(sampler.hasSeen(i));
+    }
+  });
 });

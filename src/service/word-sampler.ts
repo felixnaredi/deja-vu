@@ -48,11 +48,21 @@ export default class WordSampler<T> {
   }
 
   private nextSeen(): T {
-    let values = Array.from(this.seen.values());
+    const values = Array.from(this.seen.values());
     let x = choice(values)!;
     while (x == this._current!) {
       x = choice(values)!;
     }
     return x;
+  }
+
+  /**
+   * Checks if `element` has been seen.
+   *
+   * @param element Element to search for.
+   * @returns True if `element` has been seen.
+   */
+  public hasSeen(element: T): boolean {
+    return this.seen.has(element);
   }
 }

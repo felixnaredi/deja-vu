@@ -1,4 +1,3 @@
-<!-- eslint-disable -->
 <template>
   <div class="m-4">
     <div class="flex justify-evenly">
@@ -44,13 +43,15 @@ import { useIndexStore } from "./store";
 export default {
   components: { HistoryTable, GradientButton, ResetArrow },
   methods: {
-    commitSeen() {
-      if (useIndexStore().commitSeen()) {
+    async commitSeen() {
+      await useIndexStore().commitSeen();
+      if (this.lives > 0) {
         useIndexStore().updateCurrentWord();
       }
     },
-    commitNew() {
-      if (useIndexStore().commitNew()) {
+    async commitNew() {
+      await useIndexStore().commitUnseen();
+      if (this.lives > 0) {
         useIndexStore().updateCurrentWord();
       }
     },
