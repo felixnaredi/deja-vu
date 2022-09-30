@@ -1,16 +1,23 @@
 import { choice, popRandom } from "./choice";
+import { PRNG } from "../../dist/wasm";
+
+const DISTRIBUTION_RESOLUTION = 1_000_000;
 
 export default class WordSampler<T> {
   private unseen: Array<T>;
   private seen: Set<T>;
   private seenDistribution: number;
   private _current: null | T;
+  private _seed: bigint;
+  private rng: PRNG;
 
   public constructor(unseen: Array<T>, seenDistribution: number) {
     this.unseen = unseen;
     this.seen = new Set();
-    this.seenDistribution = seenDistribution;
+    this.seenDistribution = seenDistribution * DISTRIBUTION_RESOLUTION;
     this._current = null;
+    this._seed = BigInt(Date.now());
+    this.rng = PRNG.fromSeed(this._seed);
   }
 
   /**
@@ -30,7 +37,11 @@ export default class WordSampler<T> {
     if (this._current) {
       this.seen.add(this._current!);
     }
-    if (this.seen.size < 2 || Math.random() > this.seenDistribution) {
+    if (
+      this.seen.size < 2 ||
+      this.rng.nextWithUpperBound(DISTRIBUTION_RESOLUTION) >
+        this.seenDistribution
+    ) {
       this._current = this.nextUnseen();
     } else {
       this._current = this.nextSeen();
@@ -39,7 +50,7 @@ export default class WordSampler<T> {
   }
 
   private nextUnseen(): T {
-    const x = popRandom(this.unseen);
+    const x = popRandom(this.rng, this.unseen);
     if (x) {
       return x!;
     } else {
@@ -49,9 +60,9 @@ export default class WordSampler<T> {
 
   private nextSeen(): T {
     const values = Array.from(this.seen.values());
-    let x = choice(values)!;
+    let x = choice(this.rng, values)!;
     while (x == this._current!) {
-      x = choice(values)!;
+      x = choice(this.rng, values)!;
     }
     return x;
   }

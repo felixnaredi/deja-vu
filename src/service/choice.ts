@@ -1,14 +1,16 @@
+import { PRNG } from "../../dist/wasm";
+
 /**
  * Chooses a random element from `array` and returns it.
  *
  * @param array The array to pick an element from.
  * @returns A random element.
  */
-export function choice<T>(array: Array<T>): null | T {
+export function choice<T>(rng: PRNG, array: Array<T>): null | T {
   if (array.length == 0) {
     return null;
   } else {
-    return array[Math.floor(Math.random() * array.length)];
+    return array[rng.nextWithUpperBound(array.length)];
   }
 }
 
@@ -21,11 +23,11 @@ export function choice<T>(array: Array<T>): null | T {
  * @param array The array to pop an element from.
  * @returns A random element removed from `array`.
  */
-export function popRandom<T>(array: Array<T>): null | T {
+export function popRandom<T>(rng: PRNG, array: Array<T>): null | T {
   if (array.length == 0) {
     return null;
   } else {
-    const i = Math.floor(Math.random() * array.length);
+    const i = rng.nextWithUpperBound(array.length);
     const x = array[i];
     if (i < array.length - 1) {
       array[i] = array.pop()!;
