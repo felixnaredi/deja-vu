@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="grid grid-cols-8 gap-4">
-      <span>première</span>
+      <span class="justify-self-center">vue</span>
       <div class="col-span-5"></div>
       <span class="justify-self-center">déjà vu</span>
       <span class="justify-self-center">nouveau</span>
