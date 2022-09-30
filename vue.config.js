@@ -7,7 +7,7 @@ module.exports = defineConfig({
   configureWebpack: {
     plugins: [
       new WasmPackPlugin({
-        crateDirectory: path.resolve(__dirname, "wasm"),
+        crateDirectory: path.resolve(__dirname, "src", "wasm"),
         outDir: path.resolve(__dirname, "dist", "wasm"),
       }),
     ],
