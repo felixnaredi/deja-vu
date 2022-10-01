@@ -1,24 +1,8 @@
-# verbal-memory
+# déjà vu
 
-## Project setup
-```
-yarn install
-```
+Test your verbal memory.
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+## Contribute
 
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+If you know french and see some wierd usage of words feel free to notify me. I
+have mostly used Google Translate.

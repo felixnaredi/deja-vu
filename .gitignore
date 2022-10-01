@@ -2,11 +2,9 @@
 node_modules
 /dist
 
-
 # local env files
 .env.local
 .env.*.local
-test.txt
 
 # Log files
 npm-debug.log*

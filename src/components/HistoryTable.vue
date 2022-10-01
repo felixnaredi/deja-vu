@@ -1,10 +1,9 @@
 <template>
   <div>
-    <div class="grid grid-cols-8 gap-4">
-      <span class="justify-self-center">vue</span>
-      <div class="col-span-5"></div>
-      <span class="justify-self-center">déjà vu</span>
-      <span class="justify-self-center">nouveau</span>
+    <div class="grid grid-cols-8 gap-4 mb-3">
+      <div class="col-span-6"></div>
+      <span class="justify-self-center underline">déjà vu</span>
+      <span class="justify-self-center underline">nouveau</span>
     </div>
     <history-table-row
       v-for="entry in entries"
