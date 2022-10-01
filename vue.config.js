@@ -4,6 +4,7 @@ const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
 
 module.exports = defineConfig({
   transpileDependencies: true,
+  publicPath: process.env.NODE_ENV == "production" ? "/deja-vu/" : "/",
   configureWebpack: {
     plugins: [
       new WasmPackPlugin({

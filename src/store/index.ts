@@ -7,7 +7,7 @@ export const useIndexStore = defineStore("index", {
     lives: 3,
     score: 0,
     currentWord: "",
-    sampler: fetch("/fr/words.json").then((words) =>
+    sampler: fetch("deja-vu/dictionary/fr/words.json").then((words) =>
       words.json().then((words) => new WordSampler<string>(words, 0.4))
     ),
     historyTracker: new HistoryTracker(),
