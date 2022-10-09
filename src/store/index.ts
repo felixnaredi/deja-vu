@@ -7,7 +7,7 @@ export const useIndexStore = defineStore("index", {
     game: fetch("deja-vu/dictionary/fr/words.json").then((words) =>
       words.json().then((words) => new Game(BigInt(Date.now()), 0.4, words))
     ),
-    lives: 3,
+    lives: Game.initialLivesAmount(),
     score: 0,
     currentWord: "",
     historyTracker: new HistoryTracker(),
@@ -15,19 +15,21 @@ export const useIndexStore = defineStore("index", {
   actions: {
     async commitSeen() {
       this.historyTracker.answer = History.EntryState.Seen;
-      if ((await this.game).commitSeen()) {
-        this.score += 1;
-      } else {
-        this.lives -= 1;
-      }
+
+      this.game.then((game) => {
+        game.commitSeen();
+        this.score = game.score();
+        this.lives = game.lives();
+      });
     },
     async commitUnseen() {
       this.historyTracker.answer = History.EntryState.Unseen;
-      if ((await this.game).commitUnseen()) {
-        this.score += 1;
-      } else {
-        this.lives -= 1;
-      }
+
+      this.game.then((game) => {
+        game.commitUnseen();
+        this.score = game.score();
+        this.lives = game.lives();
+      });
     },
     async updateCurrentWord() {
       const word = (await this.game).next();

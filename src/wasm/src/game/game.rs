@@ -5,6 +5,8 @@ use crate::{
 
 const THRESHOLD_MAX: f64 = 1e9;
 
+pub const INITIAL_LIVES_AMOUNT: usize = 3;
+
 #[derive(Debug)]
 pub struct Game<T>
 {
@@ -15,7 +17,7 @@ pub struct Game<T>
   seen: Vec<T>,
   current: Option<T>,
   previuos: Option<T>,
-  strike: [Option<u32>; 3],
+  strike: [Option<u32>; INITIAL_LIVES_AMOUNT],
   rng: Konadare192PxPlusPlus,
   seen_threshold: u32,
   count: u32,
@@ -156,5 +158,17 @@ where
     } else {
       Err(GameError::EmptyCommit)
     }
+  }
+
+  /// Returns how many lives the game has left.
+  pub fn lives(&self) -> u32
+  {
+    self.strike.iter().map(|x| x.map_or(1, |_| 0)).sum::<u32>()
+  }
+
+  /// Returns the score, i.e the amount of correct commits.
+  pub fn score(&self) -> u32
+  {
+    self.count - (INITIAL_LIVES_AMOUNT as u32 - self.lives())
   }
 }

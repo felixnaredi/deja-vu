@@ -51,4 +51,31 @@ impl Game
   {
     self.0.commit_unseen().map_err(|e| format!("{}", e))
   }
+
+  /// The current score.
+  ///
+  /// @returns The score.
+  #[wasm_bindgen]
+  pub fn score(&self) -> u32
+  {
+    self.0.score()
+  }
+
+  /// Amount of lives left.
+  ///
+  /// @returns The amount.
+  #[wasm_bindgen]
+  pub fn lives(&self) -> u32
+  {
+    self.0.lives()
+  }
+
+  /// The initial amount of lives a `Game` starts with.
+  ///
+  /// @returns The amount.
+  #[wasm_bindgen]
+  pub fn initialLivesAmount() -> u32
+  {
+    game::INITIAL_LIVES_AMOUNT as u32
+  }
 }

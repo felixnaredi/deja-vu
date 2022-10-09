@@ -113,3 +113,56 @@ fn next_never_generates_same_twice_in_a_row()
     previous = x;
   }
 }
+
+#[test]
+fn score_increases_on_correct_commit()
+{
+  let mut game = Game::new(11976, 0.5, 0..8);
+  for (score, guess_seen) in [
+    (1, false),
+    (2, false),
+    (2, true),
+    (3, false),
+    (4, true),
+    (4, false),
+  ] {
+    game.next().unwrap();
+
+    if guess_seen {
+      game.commit_seen().unwrap();
+    } else {
+      game.commit_unseen().unwrap();
+    }
+
+    assert_eq!(game.score(), score);
+  }
+}
+
+#[test]
+fn life_decrease_on_incorrect_commit()
+{
+  let mut game = Game::new(211391, 0.5, 0..8);
+  for (lives, guess_seen) in [
+    (3, false),
+    (3, false),
+    (3, true),
+    (3, false),
+    (2, true),
+    (2, true),
+    (2, false),
+    (1, true),
+    (1, false),
+    (0, false),
+  ] {
+    game.next().unwrap();
+
+    if guess_seen {
+      game.commit_seen().unwrap();
+    } else {
+      game.commit_unseen().unwrap();
+    }
+    assert_eq!(game.lives(), lives);
+  }
+
+  assert!(game.finished());
+}
