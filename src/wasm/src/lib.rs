@@ -1,7 +1,5 @@
-mod constant;
 mod game;
-mod knomul;
-mod konadare192pxplusplus;
-mod prng;
+mod rng;
+mod web_api;
 
-pub use prng::PRNG;
+pub use web_api::Game;

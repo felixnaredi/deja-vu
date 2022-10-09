@@ -1,4 +1,4 @@
-use crate::constant;
+use super::constant;
 
 pub struct KNOMUL;
 

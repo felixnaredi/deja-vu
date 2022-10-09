@@ -1,4 +1,4 @@
-use crate::knomul::KNOMUL;
+use super::knomul::KNOMUL;
 
 const KONADARE192_INC: u64 = 0xBB67AE8584CAA73B;
 
