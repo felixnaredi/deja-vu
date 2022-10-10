@@ -56,7 +56,7 @@ impl Game
   ///
   /// @returns The score.
   #[wasm_bindgen]
-  pub fn score(&self) -> u32
+  pub fn score(&self) -> usize
   {
     self.0.score()
   }
@@ -65,7 +65,7 @@ impl Game
   ///
   /// @returns The amount.
   #[wasm_bindgen]
-  pub fn lives(&self) -> u32
+  pub fn lives(&self) -> usize
   {
     self.0.lives()
   }
@@ -74,8 +74,8 @@ impl Game
   ///
   /// @returns The amount.
   #[wasm_bindgen]
-  pub fn initialLivesAmount() -> u32
+  pub fn initialLivesAmount() -> usize
   {
-    game::INITIAL_LIVES_AMOUNT as u32
+    game::INITIAL_LIVES_AMOUNT
   }
 }

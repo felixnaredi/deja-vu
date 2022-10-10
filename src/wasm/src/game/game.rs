@@ -7,46 +7,66 @@ const THRESHOLD_MAX: f64 = 1e9;
 
 pub const INITIAL_LIVES_AMOUNT: usize = 3;
 
+/// Stores data to reset a `Game`.
+///
+/// TODO:
+///   It is theoretically possible to reset a `Game` without any state. And simple ways to do it
+///   with far less state than the entire unseen vector.
+#[derive(Clone, Debug)]
+struct InitialGameState<T>
+{
+  unseen: Vec<Option<T>>,
+}
+
 #[derive(Debug)]
 pub struct Game<T>
 {
-  #[allow(dead_code)]
   seed: u64,
-
   unseen: Vec<Option<T>>,
   seen: Vec<T>,
   current: Option<T>,
   previuos: Option<T>,
-  strike: [Option<u32>; INITIAL_LIVES_AMOUNT],
+  incorrect_commits: [Option<usize>; INITIAL_LIVES_AMOUNT],
   rng: Konadare192PxPlusPlus,
   seen_threshold: u32,
-  count: u32,
+  count: usize,
+  initial_game_state: InitialGameState<T>,
 }
 
 impl<T> Game<T>
-where
-  T: Clone + PartialEq,
 {
-  /// Create a new game.
-  pub fn new(seed: u64, seen_ratio: f64, unseen: impl Iterator<Item = T>) -> Game<T>
+  /// Returns how many lives the game has left.
+  pub fn lives(&self) -> usize
   {
-    Game {
-      seed,
-      unseen: unseen.map(|x| Some(x)).collect(),
-      seen: Vec::new(),
-      current: None,
-      previuos: None,
-      strike: [None; 3],
-      rng: Konadare192PxPlusPlus::from_seed(seed),
-      seen_threshold: (seen_ratio * THRESHOLD_MAX).round() as u32,
-      count: 0,
-    }
+    self
+      .incorrect_commits
+      .iter()
+      .map(|x| x.map_or(1, |_| 0))
+      .sum()
+  }
+
+  /// Returns the score, i.e the amount of correct commits.
+  pub fn score(&self) -> usize
+  {
+    self.count - (INITIAL_LIVES_AMOUNT - self.lives())
+  }
+
+  /// Indicies of incorrect commits.
+  pub fn incorrect_commits(&self) -> [Option<usize>; 3]
+  {
+    self.incorrect_commits
+  }
+
+  /// Seed used in the game.
+  pub fn seed(&self) -> u64
+  {
+    self.seed
   }
 
   /// True if three wrong commits has been made.
   pub fn finished(&self) -> bool
   {
-    self.strike[2].is_some()
+    self.incorrect_commits[2].is_some()
   }
 
   /// Throws `GameError::GameOver` if `Game::finished` is `true`.
@@ -58,7 +78,55 @@ where
       Ok(())
     }
   }
+}
 
+impl<T> Game<T>
+where
+  T: Clone,
+{
+  /// Create a new game.
+  pub fn new(seed: u64, seen_ratio: f64, unseen: impl Iterator<Item = T>) -> Game<T>
+  {
+    let unseen: Vec<Option<T>> = unseen.map(|x| Some(x)).collect();
+    Game {
+      seed,
+      unseen: unseen.clone(),
+      seen: Vec::new(),
+      current: None,
+      previuos: None,
+      incorrect_commits: [None; 3],
+      rng: Konadare192PxPlusPlus::from_seed(seed),
+      seen_threshold: (seen_ratio * THRESHOLD_MAX).round() as u32,
+      count: 0,
+      initial_game_state: InitialGameState {
+        unseen: unseen.clone(),
+      },
+    }
+  }
+
+  /// Returns a reset version of `self`. That is, a `Game` that will produce the same output given
+  /// the same input.
+  pub fn reset(self) -> Game<T>
+  {
+    Game {
+      seed: self.seed,
+      unseen: self.initial_game_state.unseen.clone(),
+      seen: Vec::new(),
+      current: None,
+      previuos: None,
+      incorrect_commits: [None; 3],
+      rng: Konadare192PxPlusPlus::from_seed(self.seed),
+      seen_threshold: self.seen_threshold,
+      count: 0,
+      initial_game_state: self.initial_game_state.clone(),
+    }
+  }
+}
+
+impl<T> Game<T>
+where
+  T: Clone + PartialEq,
+{
   /// Generates the next value.
   pub fn next(&mut self) -> Result<&T, GameError>
   {
@@ -119,9 +187,9 @@ where
     Ok(self.current.as_ref().unwrap())
   }
 
-  fn push_strike(&mut self, x: u32) -> Option<&u32>
+  fn push_strike(&mut self, x: usize) -> Option<&usize>
   {
-    for y in self.strike.iter_mut() {
+    for y in self.incorrect_commits.iter_mut() {
       if y.is_none() {
         y.replace(x);
         return y.as_ref();
@@ -158,17 +226,5 @@ where
     } else {
       Err(GameError::EmptyCommit)
     }
-  }
-
-  /// Returns how many lives the game has left.
-  pub fn lives(&self) -> u32
-  {
-    self.strike.iter().map(|x| x.map_or(1, |_| 0)).sum::<u32>()
-  }
-
-  /// Returns the score, i.e the amount of correct commits.
-  pub fn score(&self) -> u32
-  {
-    self.count - (INITIAL_LIVES_AMOUNT as u32 - self.lives())
   }
 }

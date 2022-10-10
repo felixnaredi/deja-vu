@@ -1,5 +1,8 @@
 #[cfg(test)]
+//
+//
 use std::collections::HashSet;
+use std::collections::LinkedList;
 
 #[allow(unused_imports)]
 use super::*;
@@ -165,4 +168,66 @@ fn life_decrease_on_incorrect_commit()
   }
 
   assert!(game.finished());
+}
+
+#[test]
+fn indices_are_same_as_incorrect_commits()
+{
+  let mut game = Game::new(877326994, 0.5, 0..16);
+  let guess_seen = [2, 3, 5, 6, 11];
+  let wrongs = [3, 8, 11];
+
+  for i in 0..12 {
+    game.next().unwrap();
+
+    if guess_seen.contains(&i) {
+      assert!(game.commit_seen().unwrap() == !wrongs.contains(&i));
+    } else {
+      assert!(game.commit_unseen().unwrap() == !wrongs.contains(&i));
+    }
+  }
+
+  assert_eq!(
+    wrongs
+      .iter()
+      .map(|x| Some(x.clone()))
+      .collect::<Vec<Option<usize>>>(),
+    game.incorrect_commits()
+  );
+}
+
+#[test]
+fn reset_of_a_game_produces_same_output_given_same_input()
+{
+  let mut game = Game::new(6314949274223572360, 0.4, 0..32);
+  let guess_seen = [4, 5, 8, 12, 17, 18, 19, 20, 21, 22, 24, 25];
+
+  let mut elements = LinkedList::new();
+  let mut i = 0;
+  while !game.finished() {
+    elements.push_back(game.next().unwrap().clone());
+    if guess_seen.contains(&i) {
+      game.commit_seen().unwrap();
+    } else {
+      game.commit_unseen().unwrap();
+    }
+    i += 1;
+  }
+
+  let incorrect = game.incorrect_commits().clone();
+
+  let mut game = game.reset();
+  let mut i = 0;
+  while !game.finished() {
+    assert_eq!(game.next().unwrap(), &elements.pop_front().unwrap());
+    if guess_seen.contains(&i) {
+      game.commit_seen().unwrap();
+    } else {
+      game.commit_unseen().unwrap();
+    }
+    i += 1;
+  }
+
+  assert!(elements.is_empty());
+  assert_eq!(game.incorrect_commits(), incorrect);
 }
