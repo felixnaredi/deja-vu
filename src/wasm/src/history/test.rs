@@ -98,8 +98,6 @@ fn history_is_correct_when_always_commiting_unseen()
 #[test]
 fn history_is_correct_for_a_somewhat_realistic_game()
 {
-  use SeenUnseen::*;
-
   let mut game = Game::new(8217158024524860960, 0.25, 0..64);
   let mut elements = LinkedList::new();
   let guess_seen = [4, 22, 23, 25, 26, 31, 32, 34, 37, 38];

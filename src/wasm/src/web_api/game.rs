@@ -3,10 +3,13 @@ use wasm_bindgen::prelude::{
   JsValue,
 };
 
-use crate::game;
+use crate::{
+  game,
+  web_api::history::History,
+};
 
 #[wasm_bindgen]
-pub struct Game(game::Game<JsValue>);
+pub struct Game(game::Game<String>);
 
 #[wasm_bindgen]
 #[allow(non_snake_case)]
@@ -20,12 +23,16 @@ impl Game
   #[wasm_bindgen(constructor)]
   pub fn new(seed: u64, seenRatio: f64, unseen: Vec<JsValue>) -> Game
   {
-    Game(game::Game::new(seed, seenRatio, unseen.into_iter()))
+    Game(game::Game::new(
+      seed,
+      seenRatio,
+      unseen.into_iter().map(|x| x.as_string().unwrap()),
+    ))
   }
 
   /// Generates the next element.
   #[wasm_bindgen]
-  pub fn next(&mut self) -> Result<JsValue, String>
+  pub fn next(&mut self) -> Result<String, String>
   {
     self
       .0
@@ -77,5 +84,11 @@ impl Game
   pub fn initialLivesAmount() -> usize
   {
     game::INITIAL_LIVES_AMOUNT
+  }
+
+  #[wasm_bindgen]
+  pub fn intoHistory(self) -> History
+  {
+    History::from(self.0)
   }
 }

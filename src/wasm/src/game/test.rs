@@ -1,8 +1,10 @@
 #[cfg(test)]
 //
 //
-use std::collections::HashSet;
-use std::collections::LinkedList;
+use std::collections::{
+  HashSet,
+  LinkedList,
+};
 
 #[allow(unused_imports)]
 use super::*;

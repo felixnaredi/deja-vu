@@ -1,3 +1,5 @@
+use serde::Serialize;
+
 use crate::game::{
   Game,
   INITIAL_LIVES_AMOUNT,
@@ -7,7 +9,7 @@ use crate::game::{
 // Commit
 // -------------------------------------------------------------------------------------------------
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize)]
 pub enum SeenUnseen
 {
   Seen,
@@ -19,7 +21,7 @@ pub enum SeenUnseen
 /// TODO:
 ///   It should be possible for `element` to have type `&T`. I don't know if it will matter for the
 ///   web api.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub struct Commit<T>
 {
   element: T,

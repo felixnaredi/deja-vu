@@ -6,31 +6,26 @@
       <span class="justify-self-center underline">nouveau</span>
     </div>
     <history-table-row
-      v-for="entry in entries"
-      :key="entry.index"
-      :entry="entry.value"
+      v-for="commit in commits"
+      :key="commit.index"
+      :commit="commit.value"
     />
   </div>
 </template>
 
 <script>
-import { useIndexStore } from "@/store";
+import { useHistoryStore } from "@/store/history";
 import HistoryTableRow from "./HistoryTableRow.vue";
 
 export default {
   components: { HistoryTableRow },
   computed: {
-    entries: () => {
-      return useIndexStore().historyTracker.entries.map((value, index) => {
-        return {
-          index,
-          value,
-        };
-      });
+    commits: () => {
+      return useHistoryStore().commits.map((value, index) => ({
+        index,
+        value,
+      }));
     },
-  },
-  created() {
-    console.log(this.entries);
   },
 };
 </script>

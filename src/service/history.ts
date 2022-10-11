@@ -1,34 +1,21 @@
-export namespace History {
-  export enum EntryState {
-    Unseen,
-    Seen,
-  }
+import { History, Commit } from "../../dist/wasm";
 
-  export class Entry<T> {
-    public value: T;
-    public actualState: EntryState;
-    public answeredState: null | EntryState;
-
-    constructor(value: T, actualState: EntryState) {
-      this.value = value;
-      this.actualState = actualState;
-      this.answeredState = null;
-    }
-  }
+function HistoryIterator(history: History): Iterable<Commit> {
+  const iterator = history.intoIterator();
+  return {
+    [Symbol.iterator]: function* () {
+      do {
+        const x = iterator.next();
+        if (x == null) {
+          break;
+        } else {
+          yield x;
+        }
+      } while (true);
+    },
+  };
 }
 
-export class HistoryTracker<T> {
-  public entries: Array<History.Entry<T>> = [];
-
-  public set current(value: T) {
-    if (this.entries.some((entry) => entry.value == value)) {
-      this.entries.push(new History.Entry(value, History.EntryState.Seen));
-    } else {
-      this.entries.push(new History.Entry(value, History.EntryState.Unseen));
-    }
-  }
-
-  public set answer(state: History.EntryState) {
-    this.entries[this.entries.length - 1].answeredState = state;
-  }
+export function commits(history: History): Commit[] {
+  return Array.from(HistoryIterator(history));
 }
