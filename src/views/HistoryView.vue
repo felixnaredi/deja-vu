@@ -2,7 +2,7 @@
   <score-board :score="score" :lives="lives" />
   <div class="grid justify-items-center">
     <div class="p-8 bg-red-500 m-4">
-      <p class="text-8xl text-white">fin</p>
+      <p class="text-8xl text-white select-none">fin</p>
     </div>
     <gradient-button class="m-4" @click="newGame">
       <div class="flex px-2">
