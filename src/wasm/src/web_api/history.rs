@@ -1,4 +1,3 @@
-use serde::Serialize;
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
@@ -34,7 +33,7 @@ impl SeenUnseen
 
 /// Type representing a commit made in a game.
 #[wasm_bindgen]
-#[derive(Clone, Serialize)]
+#[derive(Clone)]
 pub struct Commit(history::Commit<Inner>);
 
 #[wasm_bindgen]
