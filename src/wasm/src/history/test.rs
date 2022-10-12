@@ -18,7 +18,7 @@ fn history_is_correct_when_always_commiting_seen()
 {
   use SeenUnseen::*;
 
-  let mut game = Game::new(10000179183556691969, 0.5, 0..16);
+  let mut game = Game::new(10000179183556691969, 0.5.try_into().unwrap(), 0..16);
   let mut elements = LinkedList::new();
 
   while !game.finished() {
@@ -59,7 +59,7 @@ fn history_is_correct_when_always_commiting_unseen()
 {
   use SeenUnseen::*;
 
-  let mut game = Game::new(17230744205331056885, 0.5, 0..16);
+  let mut game = Game::new(17230744205331056885, 0.5.try_into().unwrap(), 0..16);
   let mut elements = LinkedList::new();
 
   while !game.finished() {
@@ -98,7 +98,7 @@ fn history_is_correct_when_always_commiting_unseen()
 #[test]
 fn history_is_correct_for_a_somewhat_realistic_game()
 {
-  let mut game = Game::new(8217158024524860960, 0.25, 0..64);
+  let mut game = Game::new(8217158024524860960, 0.25.try_into().unwrap(), 0..64);
   let mut elements = LinkedList::new();
   let guess_seen = [4, 22, 23, 25, 26, 31, 32, 34, 37, 38];
   let mut i = 0;

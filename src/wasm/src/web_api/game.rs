@@ -21,13 +21,13 @@ impl Game
   /// @param seenRatio The ratio of seen elements that will be generated.
   /// @param unseen List of unseen values.
   #[wasm_bindgen(constructor)]
-  pub fn new(seed: u64, seenRatio: f64, unseen: Vec<JsValue>) -> Game
+  pub fn new(seed: u64, seenRatio: f64, unseen: Vec<JsValue>) -> Result<Game, String>
   {
-    Game(game::Game::new(
+    Ok(Game(game::Game::new(
       seed,
-      seenRatio,
+      seenRatio.try_into().map_err(|e| format!("{}", e))?,
       unseen.into_iter().map(|x| x.as_string().unwrap()),
-    ))
+    )))
   }
 
   /// Generates the next element.

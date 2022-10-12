@@ -1,21 +1,43 @@
+use std::fmt::Display;
+
 use crate::{
   game::GameError,
   rng::Konadare192PxPlusPlus,
 };
 
-const THRESHOLD_MAX: f64 = 1e9;
+const THRESHOLD_MAX: u32 = 1_000_000_000;
 
 pub const INITIAL_LIVES_AMOUNT: usize = 3;
 
-/// Stores data to reset a `Game`.
-///
-/// TODO:
-///   It is theoretically possible to reset a `Game` without any state. And simple ways to do it
-///   with far less state than the entire unseen vector.
-#[derive(Clone, Debug)]
-struct InitialGameState<T>
+pub struct SeenThreshold(u32);
+
+#[derive(Debug)]
+pub struct SeenThresholdValueOutOfRange;
+
+impl Display for SeenThresholdValueOutOfRange
 {
-  unseen: Vec<Option<T>>,
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
+  {
+    writeln!(
+      f,
+      "{:?} - seen threshold ratio must be in range [0.0, 1.0]",
+      self
+    )
+  }
+}
+
+impl TryFrom<f64> for SeenThreshold
+{
+  type Error = SeenThresholdValueOutOfRange;
+
+  fn try_from(value: f64) -> Result<Self, Self::Error>
+  {
+    if value < 0.0 || value > 1.0 {
+      Err(SeenThresholdValueOutOfRange)
+    } else {
+      Ok(SeenThreshold((THRESHOLD_MAX as f64 * value) as u32))
+    }
+  }
 }
 
 #[derive(Debug)]
@@ -30,11 +52,63 @@ pub struct Game<T>
   rng: Konadare192PxPlusPlus,
   seen_threshold: u32,
   count: usize,
-  initial_game_state: InitialGameState<T>,
+  unseen_indices: Vec<u32>,
 }
 
 impl<T> Game<T>
 {
+  /// Create a new game.
+  pub fn new(seed: u64, seen_threshold: SeenThreshold, unseen: impl Iterator<Item = T>) -> Game<T>
+  {
+    let unseen: Vec<Option<T>> = unseen.map(|x| Some(x)).collect();
+    Game {
+      seed,
+      unseen,
+      seen: Vec::new(),
+      current: None,
+      previuos: None,
+      incorrect_commits: [None; 3],
+      rng: Konadare192PxPlusPlus::from_seed(seed),
+      seen_threshold: seen_threshold.0,
+      count: 0,
+      unseen_indices: Vec::new(),
+    }
+  }
+
+  /// Returns a reset version of `self`. That is, a `Game` that will produce the same output given
+  /// the same input.
+  pub fn reset(self) -> Game<T>
+  {
+    let mut unseen = self.unseen;
+
+    // Using `self.unseen_indices` it's possible to reverse the way elements were poped and shuffled
+    // in the `unseen` vector.
+
+    for (i, x) in std::iter::zip(self.unseen_indices, self.seen).rev() {
+      let i = i as usize;
+      if i == unseen.len() {
+        unseen.push(Some(x))
+      } else {
+        let y = unseen[i].take().unwrap();
+        unseen.push(Some(y));
+        unseen[i].replace(x);
+      }
+    }
+
+    Game {
+      seed: self.seed,
+      unseen,
+      seen: Vec::new(),
+      current: None,
+      previuos: None,
+      incorrect_commits: [None; 3],
+      rng: Konadare192PxPlusPlus::from_seed(self.seed),
+      seen_threshold: self.seen_threshold,
+      count: 0,
+      unseen_indices: Vec::new(),
+    }
+  }
+
   /// Returns how many lives the game has left.
   pub fn lives(&self) -> usize
   {
@@ -82,49 +156,6 @@ impl<T> Game<T>
 
 impl<T> Game<T>
 where
-  T: Clone,
-{
-  /// Create a new game.
-  pub fn new(seed: u64, seen_ratio: f64, unseen: impl Iterator<Item = T>) -> Game<T>
-  {
-    let unseen: Vec<Option<T>> = unseen.map(|x| Some(x)).collect();
-    Game {
-      seed,
-      unseen: unseen.clone(),
-      seen: Vec::new(),
-      current: None,
-      previuos: None,
-      incorrect_commits: [None; 3],
-      rng: Konadare192PxPlusPlus::from_seed(seed),
-      seen_threshold: (seen_ratio * THRESHOLD_MAX).round() as u32,
-      count: 0,
-      initial_game_state: InitialGameState {
-        unseen: unseen.clone(),
-      },
-    }
-  }
-
-  /// Returns a reset version of `self`. That is, a `Game` that will produce the same output given
-  /// the same input.
-  pub fn reset(self) -> Game<T>
-  {
-    Game {
-      seed: self.seed,
-      unseen: self.initial_game_state.unseen.clone(),
-      seen: Vec::new(),
-      current: None,
-      previuos: None,
-      incorrect_commits: [None; 3],
-      rng: Konadare192PxPlusPlus::from_seed(self.seed),
-      seen_threshold: self.seen_threshold,
-      count: 0,
-      initial_game_state: self.initial_game_state.clone(),
-    }
-  }
-}
-
-impl<T> Game<T>
-where
   T: Clone + PartialEq,
 {
   /// Generates the next value.
@@ -158,6 +189,7 @@ where
 
         // Generate a random index in `unseen`.
         let i = self.rng.next_with_upper_bound(n);
+        self.unseen_indices.push(i);
 
         if i == n - 1 {
           // If `i` is the last index, just pop it.
@@ -215,8 +247,13 @@ where
     self.game_over()?;
 
     if let Some(x) = self.current.take() {
-      let r = !self.seen.contains(&x) ^ seen;
-      self.seen.push(x.clone());
+      let r = if !self.seen.contains(&x) {
+        self.seen.push(x.clone());
+        true
+      } else {
+        false
+      } ^ seen;
+
       self.previuos.replace(x);
       if !r {
         self.push_strike(self.count);
