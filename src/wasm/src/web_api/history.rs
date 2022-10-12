@@ -71,6 +71,14 @@ impl Commit
 #[wasm_bindgen]
 pub struct History(history::History<Inner>);
 
+impl History
+{
+  pub fn inner(&self) -> &history::History<Inner>
+  {
+    &self.0
+  }
+}
+
 impl From<game::Game<Inner>> for History
 {
   fn from(game: game::Game<Inner>) -> Self

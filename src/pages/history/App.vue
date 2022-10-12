@@ -10,24 +10,25 @@
         <span>encore</span>
       </div>
     </gradient-button>
-    <history-table class="m-4" />
+    <!-- 
+      <history-table class="m-4" />
+
+    -->
   </div>
 </template>
 
 <script>
 import ResetArrow from "@/assets/ResetArrow.vue";
 import GradientButton from "@/components/GradientButton.vue";
-import HistoryTable from "@/components/HistoryTable.vue";
+// import HistoryTable from "@/components/HistoryTable.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
-import { useGameStore } from "@/store/game";
 import { useHistoryStore } from "@/store/history";
 
 export default {
-  components: { ScoreBoard, ResetArrow, HistoryTable, GradientButton },
+  components: { ScoreBoard, ResetArrow, /* HistoryTable */ GradientButton },
   methods: {
     newGame() {
-      useGameStore().$reset();
-      this.$router.push("/");
+      window.location.href = process.env.BASE_URL;
     },
   },
   computed: {

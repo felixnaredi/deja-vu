@@ -106,7 +106,7 @@ impl<T> Game<T>
   }
 
   /// Indicies of incorrect commits.
-  pub fn incorrect_commits(&self) -> [Option<usize>; 3]
+  pub fn incorrect_commits(&self) -> [Option<usize>; INITIAL_LIVES_AMOUNT]
   {
     self.incorrect_commits
   }

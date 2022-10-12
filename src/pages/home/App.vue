@@ -17,7 +17,7 @@
 import GradientButton from "@/components/GradientButton.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import { useGameStore } from "@/store/game";
-import { useHistoryStore } from "@/store/history";
+import { encode } from "../../../dist/wasm";
 
 export default {
   components: { GradientButton, ScoreBoard },
@@ -43,8 +43,7 @@ export default {
       useGameStore().updateCurrentWord();
     },
     async goToHistory() {
-      useHistoryStore().setHistory((await useGameStore().game).intoHistory());
-      this.$router.push("/history");
+      console.log(encode((await useGameStore().game).intoHistory()));
     },
   },
   computed: {

@@ -72,6 +72,22 @@ impl<'a, T> From<Game<T>> for History<T>
 
 impl<T> History<T>
 {
+  pub fn seed(&self) -> u64
+  {
+    self.0.seed()
+  }
+
+  pub fn incorrect_commits(&self) -> Vec<usize>
+  {
+    self
+      .0
+      .incorrect_commits()
+      .into_iter()
+      .filter(|x| x.is_some())
+      .map(|x| x.unwrap().clone())
+      .collect()
+  }
+
   /// Final score of the game.
   pub fn score(&self) -> usize
   {

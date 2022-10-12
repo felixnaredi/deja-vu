@@ -52,4 +52,11 @@ impl KNOMUL
     }
     KNOMUL::stir(s, true);
   }
+
+  pub fn hash(seed: u64, bytes: &[u8]) -> u64
+  {
+    bytes
+      .iter()
+      .fold(seed, |c, &x| Self::permute_index(x as u64, c))
+  }
 }
