@@ -195,7 +195,7 @@ fn indices_are_same_as_incorrect_commits()
 }
 
 #[test]
-fn reset_of_a_game_produces_same_output_given_same_input()
+fn after_reseting_a_game_it_produces_same_output_given_same_input()
 {
   let mut game = Game::new(
     6314949274223572360,

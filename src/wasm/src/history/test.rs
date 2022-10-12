@@ -33,7 +33,7 @@ where
 }
 
 #[test]
-fn history_is_correct_when_always_commiting_seen()
+fn correct_when_always_commiting_seen()
 {
   use SeenUnseen::*;
 
@@ -78,7 +78,7 @@ fn history_is_correct_when_always_commiting_seen()
 }
 
 #[test]
-fn history_is_correct_when_always_commiting_unseen()
+fn correct_when_always_commiting_unseen()
 {
   use SeenUnseen::*;
 
@@ -123,7 +123,7 @@ fn history_is_correct_when_always_commiting_unseen()
 }
 
 #[test]
-fn history_is_correct_for_a_somewhat_realistic_game()
+fn correct_for_a_somewhat_realistic_game()
 {
   let mut game = Game::new(
     8217158024524860960,
