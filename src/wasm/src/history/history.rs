@@ -59,10 +59,10 @@ impl<T> Commit<T>
 // -------------------------------------------------------------------------------------------------
 
 /// Represents a already played `Game`.
-#[derive(Debug)]
-pub struct History<T>(Game<T>);
+#[derive(Clone, Debug)]
+pub struct History<T: 'static>(Game<T>);
 
-impl<T> From<Game<T>> for History<T>
+impl<'a, T> From<Game<T>> for History<T>
 {
   fn from(game: Game<T>) -> Self
   {
@@ -95,7 +95,7 @@ impl<T> History<T>
 
 /// Iterates over the commits done in a `Game`.
 #[derive(Debug)]
-pub struct HistoryIterator<T>
+pub struct HistoryIterator<T: 'static>
 {
   game: Game<T>,
   index: usize,
@@ -156,11 +156,17 @@ impl<T> History<T>
 where
   T: Clone + PartialEq,
 {
-  pub fn into_iter(self) -> HistoryIterator<T>
+  pub fn iter(&self) -> HistoryIterator<T>
+  {
+    self.clone().into_iter()
+  }
+
+  pub fn into_iter(mut self) -> HistoryIterator<T>
   {
     let incorrect_commits = self.0.incorrect_commits().clone();
+    self.0.reset();
     HistoryIterator {
-      game: self.0.reset(),
+      game: self.0,
       index: 0,
       incorrect_commits,
       seen: Vec::new(),

@@ -3,38 +3,32 @@ import { defineStore } from "pinia";
 import { History, Commit } from "../../dist/wasm";
 
 interface State {
-  history: null | History;
-  score: number;
-  lives: number;
-  _commits: null | Commit[];
+  history: undefined | History;
 }
 
 export const useHistoryStore = defineStore("history", {
   state: () =>
     ({
-      history: null,
-      score: 0,
-      lives: 0,
-      _commits: null,
+      history: undefined,
     } as State),
   getters: {
-    commits(): Commit[] {
-      if (this._commits == null) {
-        if (this.history == null) {
-          this._commits = [];
-        } else {
-          this._commits = commits(this.history);
-        }
+    commits(): undefined | Commit[] {
+      if (this.history == undefined) {
+        return undefined;
+      } else {
+        return commits(this.history);
       }
-      return this._commits;
+    },
+    score(): undefined | number {
+      return this.history?.score();
+    },
+    lives(): undefined | number {
+      return this.history?.lives();
     },
   },
   actions: {
     setHistory(history: History) {
       this.history = history;
-      this.score = history.score();
-      this.lives = history.lives();
-      this._commits = null;
     },
   },
 });

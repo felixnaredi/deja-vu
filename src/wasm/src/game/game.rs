@@ -1,7 +1,10 @@
 use std::fmt::Display;
 
 use crate::{
-  game::GameError,
+  game::{
+    GameError,
+    Unseen,
+  },
   rng::Konadare192PxPlusPlus,
 };
 
@@ -40,11 +43,11 @@ impl TryFrom<f64> for SeenThreshold
   }
 }
 
-#[derive(Debug)]
-pub struct Game<T>
+#[derive(Clone, Debug)]
+pub struct Game<T: 'static>
 {
   seed: u64,
-  unseen: Vec<Option<T>>,
+  unseen: Unseen<T>,
   seen: Vec<T>,
   current: Option<T>,
   previuos: Option<T>,
@@ -52,18 +55,16 @@ pub struct Game<T>
   rng: Konadare192PxPlusPlus,
   seen_threshold: u32,
   count: usize,
-  unseen_indices: Vec<u32>,
 }
 
 impl<T> Game<T>
 {
   /// Create a new game.
-  pub fn new(seed: u64, seen_threshold: SeenThreshold, unseen: impl Iterator<Item = T>) -> Game<T>
+  pub fn new(seed: u64, seen_threshold: SeenThreshold, unseen: Vec<T>) -> Game<T>
   {
-    let unseen: Vec<Option<T>> = unseen.map(|x| Some(x)).collect();
     Game {
       seed,
-      unseen,
+      unseen: Unseen::new(unseen),
       seen: Vec::new(),
       current: None,
       previuos: None,
@@ -71,42 +72,21 @@ impl<T> Game<T>
       rng: Konadare192PxPlusPlus::from_seed(seed),
       seen_threshold: seen_threshold.0,
       count: 0,
-      unseen_indices: Vec::new(),
     }
   }
 
-  /// Returns a reset version of `self`. That is, a `Game` that will produce the same output given
-  /// the same input.
-  pub fn reset(self) -> Game<T>
+  /// Reset `self`. Given the same input it will now reproduce its output.
+  pub fn reset(&mut self)
   {
-    let mut unseen = self.unseen;
-
-    // Using `self.unseen_indices` it's possible to reverse the way elements were poped and shuffled
-    // in the `unseen` vector.
-
-    for (i, x) in std::iter::zip(self.unseen_indices, self.seen).rev() {
-      let i = i as usize;
-      if i == unseen.len() {
-        unseen.push(Some(x))
-      } else {
-        let y = unseen[i].take().unwrap();
-        unseen.push(Some(y));
-        unseen[i].replace(x);
-      }
+    self.unseen.reset();
+    self.seen = Vec::new();
+    self.current = None;
+    self.previuos = None;
+    for x in self.incorrect_commits.iter_mut() {
+      x.take();
     }
-
-    Game {
-      seed: self.seed,
-      unseen,
-      seen: Vec::new(),
-      current: None,
-      previuos: None,
-      incorrect_commits: [None; 3],
-      rng: Konadare192PxPlusPlus::from_seed(self.seed),
-      seen_threshold: self.seen_threshold,
-      count: 0,
-      unseen_indices: Vec::new(),
-    }
+    self.rng = Konadare192PxPlusPlus::from_seed(self.seed);
+    self.count = 0;
   }
 
   /// Returns how many lives the game has left.
@@ -182,27 +162,14 @@ where
 
   fn next_unseen(&mut self) -> Result<&T, GameError>
   {
-    match self.unseen.len() {
-      0 => Err(GameError::UnseenEmpty),
-      n => {
-        let n = n.try_into().unwrap();
-
-        // Generate a random index in `unseen`.
-        let i = self.rng.next_with_upper_bound(n);
-        self.unseen_indices.push(i);
-
-        if i == n - 1 {
-          // If `i` is the last index, just pop it.
-          self.current = self.unseen.pop().unwrap();
-        } else {
-          // If `i` is not the last index, set current to `unseen[i]` and then replace index `i`
-          // with the last element in `unseen`.
-          self.current = self.unseen[i as usize].take();
-          self.unseen[i as usize] = self.unseen.pop().unwrap();
-        }
-        Ok(self.current.as_ref().unwrap())
-      }
-    }
+    self.current = Some(
+      self
+        .unseen
+        .poll(&mut self.rng)
+        .map(|x| x.clone())
+        .ok_or(GameError::UnseenEmpty)?,
+    );
+    Ok(self.current.as_ref().unwrap())
   }
 
   fn next_seen(&mut self) -> Result<&T, GameError>
@@ -212,14 +179,14 @@ where
 
       // Prevent next generated value from being equal to the previous.
       if self.previuos.as_ref().map_or(true, |x| x != &self.seen[i]) {
-        self.current = Some(self.seen[i].clone());
+        self.current = self.seen.get(i).map(|x| x.clone());
         break;
       }
     }
     Ok(self.current.as_ref().unwrap())
   }
 
-  fn push_strike(&mut self, x: usize) -> Option<&usize>
+  fn push_incorrect_commit(&mut self, x: usize) -> Option<&usize>
   {
     for y in self.incorrect_commits.iter_mut() {
       if y.is_none() {
@@ -256,7 +223,7 @@ where
 
       self.previuos.replace(x);
       if !r {
-        self.push_strike(self.count);
+        self.push_incorrect_commit(self.count);
       }
       self.count += 1;
       Ok(r)

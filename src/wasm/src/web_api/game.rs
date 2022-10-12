@@ -26,7 +26,7 @@ impl Game
     Ok(Game(game::Game::new(
       seed,
       seenRatio.try_into().map_err(|e| format!("{}", e))?,
-      unseen.into_iter().map(|x| x.as_string().unwrap()),
+      unseen.into_iter().map(|x| x.as_string().unwrap()).collect(),
     )))
   }
 

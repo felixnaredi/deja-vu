@@ -2,7 +2,7 @@ use super::knomul::KNOMUL;
 
 const KONADARE192_INC: u64 = 0xBB67AE8584CAA73B;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Konadare192PxPlusPlus
 {
   a: u64,

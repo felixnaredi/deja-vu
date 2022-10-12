@@ -98,9 +98,9 @@ impl History
   }
 
   #[wasm_bindgen]
-  pub fn intoIterator(self) -> HistoryIterator
+  pub fn iterator(&self) -> HistoryIterator
   {
-    HistoryIterator(self.0.into_iter())
+    HistoryIterator(self.0.iter())
   }
 }
 

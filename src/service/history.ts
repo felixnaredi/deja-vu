@@ -1,7 +1,7 @@
 import { History, Commit } from "../../dist/wasm";
 
 function HistoryIterator(history: History): Iterable<Commit> {
-  const iterator = history.intoIterator();
+  const iterator = history.iterator();
   return {
     [Symbol.iterator]: function* () {
       do {

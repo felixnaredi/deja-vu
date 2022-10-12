@@ -1,4 +1,6 @@
 mod history;
+
+#[cfg(test)]
 mod test;
 
 pub use history::{

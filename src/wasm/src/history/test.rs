@@ -1,24 +1,47 @@
-#[cfg(test)]
-//
-//
-#[allow(unused_imports)]
-use std::collections::LinkedList;
+use std::{
+  collections::LinkedList,
+  iter,
+};
 
-#[allow(unused_imports)]
 use crate::{
-  game::Game,
+  game::{
+    Game,
+    INITIAL_LIVES_AMOUNT,
+  },
   history::{
     History,
     SeenUnseen,
   },
 };
 
+fn run_game<T>(game: &mut Game<T>, guess_seen: &[usize]) -> Vec<T>
+where
+  T: Clone + PartialEq,
+{
+  let mut s = Vec::new();
+  let mut i = 0;
+  while !game.finished() {
+    s.push(game.next().unwrap().clone());
+    if guess_seen.contains(&i) {
+      game.commit_seen().unwrap();
+    } else {
+      game.commit_unseen().unwrap();
+    }
+    i += 1;
+  }
+  s
+}
+
 #[test]
 fn history_is_correct_when_always_commiting_seen()
 {
   use SeenUnseen::*;
 
-  let mut game = Game::new(10000179183556691969, 0.5.try_into().unwrap(), 0..16);
+  let mut game = Game::new(
+    10000179183556691969,
+    0.5.try_into().unwrap(),
+    (0..16).collect(),
+  );
   let mut elements = LinkedList::new();
 
   while !game.finished() {
@@ -59,7 +82,11 @@ fn history_is_correct_when_always_commiting_unseen()
 {
   use SeenUnseen::*;
 
-  let mut game = Game::new(17230744205331056885, 0.5.try_into().unwrap(), 0..16);
+  let mut game = Game::new(
+    17230744205331056885,
+    0.5.try_into().unwrap(),
+    (0..16).collect(),
+  );
   let mut elements = LinkedList::new();
 
   while !game.finished() {
@@ -98,21 +125,13 @@ fn history_is_correct_when_always_commiting_unseen()
 #[test]
 fn history_is_correct_for_a_somewhat_realistic_game()
 {
-  let mut game = Game::new(8217158024524860960, 0.25.try_into().unwrap(), 0..64);
-  let mut elements = LinkedList::new();
-  let guess_seen = [4, 22, 23, 25, 26, 31, 32, 34, 37, 38];
-  let mut i = 0;
+  let mut game = Game::new(
+    8217158024524860960,
+    0.25.try_into().unwrap(),
+    (0..64).collect(),
+  );
+  let elements = run_game(&mut game, &[4, 22, 23, 25, 26, 31, 32, 34, 37, 38]);
 
-  while !game.finished() {
-    elements.push_back(game.next().unwrap().clone());
-
-    if guess_seen.contains(&i) {
-      game.commit_seen().unwrap();
-    } else {
-      game.commit_unseen().unwrap();
-    }
-    i += 1;
-  }
   let score = game.score();
   let lives = game.lives();
   let incorrect: Vec<usize> = game
@@ -126,14 +145,36 @@ fn history_is_correct_for_a_somewhat_realistic_game()
   assert_eq!(history.score(), score);
   assert_eq!(history.lives(), lives);
 
-  for (i, commit) in history.into_iter().enumerate() {
-    assert_eq!(commit.element(), &elements.pop_front().unwrap());
+  let mut lives = INITIAL_LIVES_AMOUNT;
+
+  for (i, (commit, element)) in iter::zip(history.into_iter(), elements.iter()).enumerate() {
+    assert_eq!(commit.element(), element);
     if incorrect.contains(&i) {
-      assert!(!commit.correct())
+      assert!(!commit.correct());
+      lives -= 1;
     } else {
-      assert!(commit.correct())
+      assert!(commit.correct());
     }
   }
+  assert_eq!(lives, 0);
+}
 
-  assert!(elements.is_empty())
+#[test]
+fn can_be_iterated_over_multiple_times()
+{
+  let mut game = Game::new(
+    10648384310693818260,
+    0.4.try_into().unwrap(),
+    (0..32).collect(),
+  );
+  let elements = run_game(&mut game, &[3, 7, 8, 13, 21, 23, 24]);
+
+  let history = History::from(game);
+
+  for (commit, element) in iter::zip(history.iter(), elements.iter()) {
+    assert_eq!(commit.element(), element)
+  }
+  for (commit, element) in iter::zip(history.iter(), elements.iter()) {
+    assert_eq!(commit.element(), element)
+  }
 }
