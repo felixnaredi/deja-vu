@@ -14,10 +14,10 @@
 </template>
 
 <script>
+import GradientButton from "@/components/GradientButton.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
-import GradientButton from "../components/GradientButton.vue";
-import { useGameStore } from "../store/game";
-import { useHistoryStore } from "../store/history";
+import { useGameStore } from "@/store/game";
+import { useHistoryStore } from "@/store/history";
 
 export default {
   components: { GradientButton, ScoreBoard },

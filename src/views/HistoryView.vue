@@ -15,9 +15,9 @@
 </template>
 
 <script>
+import ResetArrow from "@/assets/ResetArrow.vue";
 import GradientButton from "@/components/GradientButton.vue";
 import HistoryTable from "@/components/HistoryTable.vue";
-import ResetArrow from "@/assets/ResetArrow.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import { useGameStore } from "@/store/game";
 import { useHistoryStore } from "@/store/history";

@@ -1,5 +1,5 @@
-import { commits } from "@/service/history";
 import { defineStore } from "pinia";
+import { commits } from "@/service/history";
 import { History, Commit } from "../../dist/wasm";
 
 interface State {

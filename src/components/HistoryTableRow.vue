@@ -24,8 +24,8 @@
 </template>
 
 <script>
-import TickSymbol from "../assets/TickSymbol.vue";
-import CrossSymbol from "../assets/CrossSymbol.vue";
+import TickSymbol from "@/assets/TickSymbol.vue";
+import CrossSymbol from "@/assets/CrossSymbol.vue";
 import EyeSymbol from "@/assets/EyeSymbol.vue";
 import { Commit } from "../../dist/wasm";
 
