@@ -1,30 +1,31 @@
 <!-- eslint-disable -->
 <template>
-  <div
-    class="
-      fixed
-      top-0
-      w-screen
-      z-20
-      grid grid-cols-12
-      mt-20
-      opacity-95
-      hover:opacity-100
-    "
-  >
-    <div class="col-span-3"></div>
-    <div class="col-span-6 place-self-center">
-      <error-sign
-        class="mt-15"
-        message="There isn't really an error. The sign is just for display."
-      />
-    </div>
-    <div class="col-span-3"></div>
-  </div>
-  <div>
+  <div v-if="errorMessage.length > 0">
     <div
-      class="fixed top-0 z-10 h-screen w-screen bg-slate-300 opacity-75"
-    ></div>
+      class="
+        fixed
+        top-0
+        w-screen
+        z-20
+        grid grid-cols-12
+        mt-20
+        opacity-95
+        hover:opacity-100
+      "
+    >
+      <div class="col-span-3"></div>
+      <div class="col-span-6 w-full">
+        <error-sign class="mt-15"
+          ><p>{{ errorMessage }}</p></error-sign
+        >
+      </div>
+      <div class="col-span-3"></div>
+    </div>
+    <div>
+      <div
+        class="fixed top-0 z-10 h-screen w-screen bg-slate-300 opacity-75"
+      ></div>
+    </div>
   </div>
   <div class="z-0">
     <score-board :score="score" :lives="lives" />
@@ -61,6 +62,9 @@ export default {
     GradientButton,
     ErrorSign,
   },
+  data: () => ({
+    errorMessage: "",
+  }),
   methods: {
     newGame() {
       window.location.href = process.env.BASE_URL;
@@ -70,12 +74,17 @@ export default {
     score: () => useHistoryStore().score,
     lives: () => useHistoryStore().lives,
   },
-  created: () => {
+  created() {
     fetch(path(process.env.BASE_URL, "dictionary", "fr01", "words.json")).then(
       (words) => {
         words.json().then((words) => {
-          const history = Encoded.decode(window.location.href, words);
-          useHistoryStore().setHistory(history);
+          try {
+            const history = Encoded.decode(window.location.href, words);
+            useHistoryStore().setHistory(history);
+          } catch (error) {
+            console.error(`Error: Encoded.decode -  ${error}`);
+            this.errorMessage = error;
+          }
         });
       }
     );

@@ -7,35 +7,14 @@ use wasm_bindgen::prelude::{
 use crate::{
   coder::{
     self,
+    SealedEncoded,
     Version00Coding,
   },
   web_api,
 };
 
 #[wasm_bindgen]
-pub struct Encoded(coder::Encoded);
-
-#[wasm_bindgen]
-impl Encoded
-{
-  #[wasm_bindgen]
-  pub fn version(&self) -> String
-  {
-    self.0.version().into()
-  }
-
-  #[wasm_bindgen]
-  pub fn data(&self) -> String
-  {
-    self.0.data().into()
-  }
-
-  #[wasm_bindgen]
-  pub fn checksum(&self) -> u64
-  {
-    self.0.checksum()
-  }
-}
+pub struct Encoded(coder::SealedEncoded);
 
 #[allow(non_snake_case)]
 #[wasm_bindgen]
@@ -58,12 +37,14 @@ impl Encoded
   {
     Ok(web_api::History::from(
       Version00Coding::decode(
-        serde_urlencoded::from_str(
+        serde_urlencoded::from_str::<SealedEncoded>(
           Url::parse(&url)
             .map_err(|e| format!("{}", e))?
             .query()
-            .ok_or(String::from("error - url is missing search query"))?,
+            .ok_or(String::from("url is missing search query"))?,
         )
+        .map_err(|e| format!("{}", e))?
+        .valid()
         .map_err(|e| format!("{}", e))?,
         unseen.into_iter().map(|x| x.as_string().unwrap()).collect(),
       )

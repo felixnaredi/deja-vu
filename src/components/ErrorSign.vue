@@ -2,7 +2,9 @@
 <template>
   <div class="p-8 bg-amber-200 border-solid border-2 border-sky-500">
     <h1 class="text-red-500 font-bold text-lg mb-3">Error</h1>
-    <p class="mb-16">{{ message }}</p>
+    <div class="mb-16">
+      <slot>{{ message }}</slot>
+    </div>
     <span
       class="
         border-2

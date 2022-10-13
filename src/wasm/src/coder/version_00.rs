@@ -9,7 +9,8 @@ use crate::{
   coder::{
     encoded::{
       Encoded,
-      EncodedBuilder,
+      SealedEncoded,
+      SealedEncodedBuilder,
     },
     unseen_id::UnseenID,
   },
@@ -27,7 +28,7 @@ pub struct Version00Coding
 
 impl Version00Coding
 {
-  fn id() -> &'static str
+  pub fn id() -> &'static str
   {
     "00"
   }
@@ -42,12 +43,12 @@ impl Version00Coding
     Ok(serde_json::from_slice(base64::decode(data)?.as_slice())?)
   }
 
-  fn hash_seed() -> u64
+  pub fn hash_seed() -> u64
   {
     4997987866499591411
   }
 
-  pub fn encode<T>(history: &History<T>) -> Encoded
+  pub fn encode<T>(history: &History<T>) -> SealedEncoded
   {
     let version = Self {
       unseen_id: UnseenID::DictionaryFr01,
@@ -61,7 +62,7 @@ impl Version00Coding
 
     let data = version.base64_encode();
 
-    EncodedBuilder::default()
+    SealedEncodedBuilder::default()
       .version(Self::id().into())
       .checksum(KNOMUL::hash(Self::hash_seed(), data.as_bytes()))
       .data(data)
