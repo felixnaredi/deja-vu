@@ -14,10 +14,11 @@ use crate::{
     },
     unseen_id::UnseenID,
   },
-  history::History,
+  game_over::GameOver,
   rng::KNOMUL,
 };
 
+/// `Version00Coding` is a simple coding format that can restore played games.
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Version00Coding
 {
@@ -28,6 +29,7 @@ pub struct Version00Coding
 
 impl Version00Coding
 {
+  /// Version id.
   pub fn id() -> &'static str
   {
     "00"
@@ -43,20 +45,22 @@ impl Version00Coding
     Ok(serde_json::from_slice(base64::decode(data)?.as_slice())?)
   }
 
+  /// Seed used when hashing `data` for the checksum of the encoding.
   pub fn hash_seed() -> u64
   {
     4997987866499591411
   }
 
-  pub fn encode<T>(history: &History<T>) -> SealedEncoded
+  /// Encodes `game_over`.
+  pub fn encode<T>(game_over: &GameOver<T>) -> SealedEncoded
   {
     let version = Self {
       unseen_id: UnseenID::DictionaryFr01,
-      seed: history.seed(),
+      seed: game_over.seed(),
       incorrect_commits: vec![
-        history.incorrect_commits()[0].unwrap(),
-        history.incorrect_commits()[1].unwrap(),
-        history.incorrect_commits()[2].unwrap(),
+        game_over.incorrect_commits()[0].unwrap(),
+        game_over.incorrect_commits()[1].unwrap(),
+        game_over.incorrect_commits()[2].unwrap(),
       ],
     };
 
@@ -70,12 +74,14 @@ impl Version00Coding
       .unwrap()
   }
 
-  pub fn decode<T>(encoded: Encoded, unseen: Vec<T>) -> Result<History<T>, Box<dyn Error>>
+  /// Decodes `encoded`, restoring the encoded `GameOver<T>`. Fails if the serialized `data` is
+  /// currupt.
+  pub fn decode<T>(encoded: Encoded, unseen: Vec<T>) -> Result<GameOver<T>, Box<dyn Error>>
   where
     T: Clone + PartialEq,
   {
     let decoded = Self::base64_decode(encoded.data())?;
-    Ok(History::new(
+    Ok(GameOver::new(
       decoded.seed,
       unseen,
       0.4.try_into()?,

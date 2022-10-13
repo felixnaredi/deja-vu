@@ -39,7 +39,7 @@
           <span>encore</span>
         </div>
       </gradient-button>
-      <history-table class="m-4" />
+      <game-over-table class="m-4" />
     </div>
   </div>
 </template>
@@ -47,9 +47,9 @@
 <script>
 import ResetArrow from "@/assets/ResetArrow.vue";
 import GradientButton from "@/components/GradientButton.vue";
-import HistoryTable from "@/components/HistoryTable.vue";
+import GameOverTable from "@/components/GameOverTable.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
-import { useHistoryStore } from "@/store/history";
+import { useGameOverStore } from "@/store/history";
 import { Encoded } from "../../../dist/wasm";
 import path from "@/service/path";
 import ErrorSign from "@/components/ErrorSign.vue";
@@ -58,7 +58,7 @@ export default {
   components: {
     ScoreBoard,
     ResetArrow,
-    HistoryTable,
+    GameOverTable,
     GradientButton,
     ErrorSign,
   },
@@ -71,8 +71,8 @@ export default {
     },
   },
   computed: {
-    score: () => useHistoryStore().score,
-    lives: () => useHistoryStore().lives,
+    score: () => useGameOverStore().score,
+    lives: () => useGameOverStore().lives,
   },
   created() {
     fetch(path(process.env.BASE_URL, "dictionary", "fr01", "words.json")).then(
@@ -80,7 +80,7 @@ export default {
         words.json().then((words) => {
           try {
             const history = Encoded.decode(window.location.href, words);
-            useHistoryStore().setHistory(history);
+            useGameOverStore().setGameOver(history);
           } catch (error) {
             console.error(`Error: Encoded.decode -  ${error}`);
             this.errorMessage = error;

@@ -3,7 +3,7 @@ extern crate derive_builder;
 
 mod coder;
 mod game;
-mod history;
+mod game_over;
 mod rng;
 mod web_api;
 
@@ -11,5 +11,5 @@ pub use web_api::{
   Commit,
   Encoded,
   Game,
-  History,
+  GameOver,
 };

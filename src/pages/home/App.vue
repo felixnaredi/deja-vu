@@ -28,7 +28,7 @@ export default {
       if (this.lives > 0) {
         useGameStore().updateCurrentWord();
       } else {
-        this.goToHistory();
+        this.goToGameOver();
       }
     },
     async commitUnseen() {
@@ -36,15 +36,15 @@ export default {
       if (this.lives > 0) {
         useGameStore().updateCurrentWord();
       } else {
-        this.goToHistory();
+        this.goToGameOver();
       }
     },
     reset() {
       useGameStore().$reset();
       useGameStore().updateCurrentWord();
     },
-    async goToHistory() {
-      const encoded = new Encoded((await useGameStore().game).intoHistory());
+    async goToGameOver() {
+      const encoded = new Encoded((await useGameStore().game).intoGameOver());
       window.location.href = `${path(
         process.env.BASE_URL,
         "game-over"

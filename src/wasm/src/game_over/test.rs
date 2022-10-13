@@ -8,8 +8,8 @@ use crate::{
     Game,
     INITIAL_LIVES_AMOUNT,
   },
-  history::{
-    History,
+  game_over::{
+    GameOver,
     SeenUnseen,
   },
 };
@@ -57,11 +57,11 @@ fn correct_when_always_commiting_seen()
     .cloned()
     .collect();
 
-  let history = History::from(game);
-  assert_eq!(history.score(), score);
-  assert_eq!(history.lives(), lives);
+  let game_over = GameOver::from(game);
+  assert_eq!(game_over.score(), score);
+  assert_eq!(game_over.lives(), lives);
 
-  for (i, commit) in history.into_iter().enumerate() {
+  for (i, commit) in game_over.into_iter().enumerate() {
     assert_eq!(commit.guess(), &Seen);
     assert_eq!(commit.element(), &elements.pop_front().unwrap());
 
@@ -102,11 +102,11 @@ fn correct_when_always_commiting_unseen()
     .cloned()
     .collect();
 
-  let history = History::from(game);
-  assert_eq!(history.score(), score);
-  assert_eq!(history.lives(), lives);
+  let game_over = GameOver::from(game);
+  assert_eq!(game_over.score(), score);
+  assert_eq!(game_over.lives(), lives);
 
-  for (i, commit) in history.into_iter().enumerate() {
+  for (i, commit) in game_over.into_iter().enumerate() {
     assert_eq!(commit.guess(), &Unseen);
     assert_eq!(commit.element(), &elements.pop_front().unwrap());
 
@@ -141,13 +141,13 @@ fn correct_for_a_somewhat_realistic_game()
     .cloned()
     .collect();
 
-  let history = History::from(game);
-  assert_eq!(history.score(), score);
-  assert_eq!(history.lives(), lives);
+  let game_over = GameOver::from(game);
+  assert_eq!(game_over.score(), score);
+  assert_eq!(game_over.lives(), lives);
 
   let mut lives = INITIAL_LIVES_AMOUNT;
 
-  for (i, (commit, element)) in iter::zip(history.into_iter(), elements.iter()).enumerate() {
+  for (i, (commit, element)) in iter::zip(game_over.into_iter(), elements.iter()).enumerate() {
     assert_eq!(commit.element(), element);
     if incorrect.contains(&i) {
       assert!(!commit.correct());
@@ -169,12 +169,12 @@ fn can_be_iterated_over_multiple_times()
   );
   let elements = run_game(&mut game, &[3, 7, 8, 13, 21, 23, 24]);
 
-  let history = History::from(game);
+  let game_over = GameOver::from(game);
 
-  for (commit, element) in iter::zip(history.iter(), elements.iter()) {
+  for (commit, element) in iter::zip(game_over.iter(), elements.iter()) {
     assert_eq!(commit.element(), element)
   }
-  for (commit, element) in iter::zip(history.iter(), elements.iter()) {
+  for (commit, element) in iter::zip(game_over.iter(), elements.iter()) {
     assert_eq!(commit.element(), element)
   }
 }
@@ -182,13 +182,16 @@ fn can_be_iterated_over_multiple_times()
 #[test]
 fn initialized_with_new_works()
 {
-  let history = History::new(
+  let game_over = GameOver::new(
     13287618919374043026,
     (0..64).collect(),
     0.5.try_into().unwrap(),
     [Some(14), Some(22), Some(35)],
   );
-  assert_eq!(history.score(), 33);
-  assert_eq!(history.lives(), 0);
-  assert_eq!(history.incorrect_commits(), [Some(14), Some(22), Some(35)]);
+  assert_eq!(game_over.score(), 33);
+  assert_eq!(game_over.lives(), 0);
+  assert_eq!(
+    game_over.incorrect_commits(),
+    [Some(14), Some(22), Some(35)]
+  );
 }

@@ -2,7 +2,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
   game,
-  history,
+  game_over,
 };
 
 type Inner = String;
@@ -10,7 +10,7 @@ type Inner = String;
 /// Pseudo boolean that is either `Seen` or `Unseen`.
 #[derive(Clone, Debug)]
 #[wasm_bindgen]
-pub struct SeenUnseen(history::SeenUnseen);
+pub struct SeenUnseen(game_over::SeenUnseen);
 
 #[wasm_bindgen]
 #[allow(non_snake_case)]
@@ -20,7 +20,7 @@ impl SeenUnseen
   #[wasm_bindgen]
   pub fn isSeen(&self) -> bool
   {
-    self.0 == history::SeenUnseen::Seen
+    self.0 == game_over::SeenUnseen::Seen
   }
 
   /// True if the state is `Unseen`.
@@ -34,7 +34,7 @@ impl SeenUnseen
 /// Type representing a commit made in a game.
 #[wasm_bindgen]
 #[derive(Clone)]
-pub struct Commit(history::Commit<Inner>);
+pub struct Commit(game_over::Commit<Inner>);
 
 #[wasm_bindgen]
 impl Commit
@@ -69,35 +69,35 @@ impl Commit
 }
 
 #[wasm_bindgen]
-pub struct History(history::History<Inner>);
+pub struct GameOver(game_over::GameOver<Inner>);
 
-impl History
+impl GameOver
 {
-  pub fn inner(&self) -> &history::History<Inner>
+  pub fn inner(&self) -> &game_over::GameOver<Inner>
   {
     &self.0
   }
 }
 
-impl From<game::Game<Inner>> for History
+impl From<game::Game<Inner>> for GameOver
 {
   fn from(game: game::Game<Inner>) -> Self
   {
-    History(history::History::from(game))
+    GameOver(game_over::GameOver::from(game))
   }
 }
 
-impl From<history::History<Inner>> for History
+impl From<game_over::GameOver<Inner>> for GameOver
 {
-  fn from(history: history::History<Inner>) -> Self
+  fn from(game_over: game_over::GameOver<Inner>) -> Self
   {
-    History(history)
+    GameOver(game_over)
   }
 }
 
 #[allow(non_snake_case)]
 #[wasm_bindgen]
-impl History
+impl GameOver
 {
   /// Final score of the game.
   #[wasm_bindgen]
@@ -114,17 +114,17 @@ impl History
   }
 
   #[wasm_bindgen]
-  pub fn iterator(&self) -> HistoryIterator
+  pub fn iterator(&self) -> GameOverIterator
   {
-    HistoryIterator(self.0.iter())
+    GameOverIterator(self.0.iter())
   }
 }
 
 #[wasm_bindgen]
-pub struct HistoryIterator(history::HistoryIterator<Inner>);
+pub struct GameOverIterator(game_over::GameOverIterator<Inner>);
 
 #[wasm_bindgen]
-impl HistoryIterator
+impl GameOverIterator
 {
   #[wasm_bindgen]
   pub fn next(&mut self) -> Option<Commit>

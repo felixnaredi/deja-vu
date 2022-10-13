@@ -1,10 +1,10 @@
 mod encoded;
 mod game;
-mod history;
+mod game_over;
 
 pub use encoded::Encoded;
 pub use game::Game;
-pub use history::{
+pub use game_over::{
   Commit,
-  History,
+  GameOver,
 };

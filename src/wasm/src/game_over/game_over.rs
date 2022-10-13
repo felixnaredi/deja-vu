@@ -56,22 +56,22 @@ impl<T> Commit<T>
 }
 
 // -------------------------------------------------------------------------------------------------
-// History
+// GameOver
 // -------------------------------------------------------------------------------------------------
 
 /// Represents a already played `Game`.
 #[derive(Clone, Debug)]
-pub struct History<T>(Game<T>);
+pub struct GameOver<T>(Game<T>);
 
-impl<T> From<Game<T>> for History<T>
+impl<T> From<Game<T>> for GameOver<T>
 {
   fn from(game: Game<T>) -> Self
   {
-    History(game)
+    GameOver(game)
   }
 }
 
-impl<T> History<T>
+impl<T> GameOver<T>
 where
   T: Clone + PartialEq,
 {
@@ -80,17 +80,17 @@ where
     unseen: Vec<T>,
     seen_threshold: SeenThreshold,
     incorrect_commits: IncorrectCommits,
-  ) -> History<T>
+  ) -> GameOver<T>
   {
     let game = Game::new(seed, seen_threshold, unseen);
-    let mut iterator = History(game).into_iter();
+    let mut iterator = GameOver(game).into_iter();
     iterator.incorrect_commits = incorrect_commits;
     iterator.all(|_| true);
-    History(iterator.game)
+    GameOver(iterator.game)
   }
 }
 
-impl<T> History<T>
+impl<T> GameOver<T>
 {
   pub fn seed(&self) -> u64
   {
@@ -125,7 +125,7 @@ impl<T> History<T>
 
 /// Iterates over the commits done in a `Game`.
 #[derive(Debug)]
-pub struct HistoryIterator<T>
+pub struct GameOverIterator<T>
 {
   game: Game<T>,
   index: usize,
@@ -133,7 +133,7 @@ pub struct HistoryIterator<T>
   seen: Vec<T>,
 }
 
-impl<T> Iterator for HistoryIterator<T>
+impl<T> Iterator for GameOverIterator<T>
 where
   T: Clone + PartialEq,
 {
@@ -182,20 +182,20 @@ where
   }
 }
 
-impl<T> History<T>
+impl<T> GameOver<T>
 where
   T: Clone + PartialEq,
 {
-  pub fn iter(&self) -> HistoryIterator<T>
+  pub fn iter(&self) -> GameOverIterator<T>
   {
     self.clone().into_iter()
   }
 
-  pub fn into_iter(mut self) -> HistoryIterator<T>
+  pub fn into_iter(mut self) -> GameOverIterator<T>
   {
     let incorrect_commits = self.0.incorrect_commits().clone();
     self.0.reset();
-    HistoryIterator {
+    GameOverIterator {
       game: self.0,
       index: 0,
       incorrect_commits,

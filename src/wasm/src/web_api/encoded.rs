@@ -21,9 +21,9 @@ pub struct Encoded(coder::SealedEncoded);
 impl Encoded
 {
   #[wasm_bindgen(constructor)]
-  pub fn new(history: &web_api::History) -> Encoded
+  pub fn new(game_over: &web_api::GameOver) -> Encoded
   {
-    Encoded(Version00Coding::encode(history.inner()))
+    Encoded(Version00Coding::encode(game_over.inner()))
   }
 
   #[wasm_bindgen]
@@ -33,9 +33,9 @@ impl Encoded
   }
 
   #[wasm_bindgen]
-  pub fn decode(url: String, unseen: Vec<JsValue>) -> Result<web_api::History, String>
+  pub fn decode(url: String, unseen: Vec<JsValue>) -> Result<web_api::GameOver, String>
   {
-    Ok(web_api::History::from(
+    Ok(web_api::GameOver::from(
       Version00Coding::decode(
         serde_urlencoded::from_str::<SealedEncoded>(
           Url::parse(&url)
@@ -44,7 +44,7 @@ impl Encoded
             .ok_or(String::from("url is missing search query"))?,
         )
         .map_err(|e| format!("{}", e))?
-        .valid()
+        .try_into()
         .map_err(|e| format!("{}", e))?,
         unseen.into_iter().map(|x| x.as_string().unwrap()).collect(),
       )

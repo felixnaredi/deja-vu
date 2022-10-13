@@ -5,7 +5,7 @@
       <span class="justify-self-center underline">déjà vu</span>
       <span class="justify-self-center underline">nouveau</span>
     </div>
-    <history-table-row
+    <game-over-table-row
       v-for="commit in commits"
       :key="commit.index"
       :commit="commit.value"
@@ -14,14 +14,14 @@
 </template>
 
 <script>
-import { useHistoryStore } from "@/store/history";
-import HistoryTableRow from "./HistoryTableRow.vue";
+import { useGameOverStore } from "@/store/history";
+import GameOverTableRow from "./GameOverTableRow.vue";
 
 export default {
-  components: { HistoryTableRow },
+  components: { GameOverTableRow },
   computed: {
     commits: () => {
-      return useHistoryStore().commits?.map((value, index) => ({
+      return useGameOverStore().commits?.map((value, index) => ({
         index,
         value,
       }));

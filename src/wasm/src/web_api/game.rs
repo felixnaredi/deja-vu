@@ -5,7 +5,7 @@ use wasm_bindgen::prelude::{
 
 use crate::{
   game,
-  web_api::history::History,
+  web_api,
 };
 
 #[wasm_bindgen]
@@ -87,8 +87,8 @@ impl Game
   }
 
   #[wasm_bindgen]
-  pub fn intoHistory(self) -> History
+  pub fn intoGameOver(self) -> web_api::GameOver
   {
-    History::from(self.0)
+    web_api::GameOver::from(self.0)
   }
 }

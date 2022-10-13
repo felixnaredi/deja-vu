@@ -10,6 +10,28 @@ use crate::{
   rng::KNOMUL,
 };
 
+// -------------------------------------------------------------------------------------------------
+// Encoded
+// -------------------------------------------------------------------------------------------------
+
+/// Access to the encoded `data`.
+pub struct Encoded(SealedEncoded);
+
+impl Encoded
+{
+  /// Base64 encoded data.
+  pub fn data(&self) -> &str
+  {
+    self.0.data.as_ref()
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+// SealedEncoded
+// -------------------------------------------------------------------------------------------------
+
+/// The container of data and meta data for an `Encoded`. To access the underlying data it can be
+/// cast into an `Encoded` with `SealedEncoded::try_into()`.
 #[derive(Builder, Debug, Serialize, Deserialize)]
 pub struct SealedEncoded
 {
@@ -17,6 +39,28 @@ pub struct SealedEncoded
   checksum: u64,
   data: String,
 }
+
+impl TryFrom<SealedEncoded> for Encoded
+{
+  type Error = SealedEncodedError;
+
+  fn try_from(s: SealedEncoded) -> Result<Encoded, SealedEncodedError>
+  {
+    use SealedEncodedError::*;
+
+    if s.checksum != KNOMUL::hash(Version00Coding::hash_seed(), s.data.as_bytes()) {
+      Err(InvalidChecksum)
+    } else if s.version != Version00Coding::id() {
+      Err(UnrecognisedVersion(s.version))
+    } else {
+      Ok(Encoded(s))
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+// SealedEncodedError
+// -------------------------------------------------------------------------------------------------
 
 #[derive(Debug, PartialEq)]
 pub enum SealedEncodedError
@@ -32,35 +76,8 @@ impl Display for SealedEncodedError
     use SealedEncodedError::*;
 
     match self {
-      InvalidChecksum => writeln!(f, "the data has been currupted"),
+      InvalidChecksum => writeln!(f, "the data is currupted"),
       UnrecognisedVersion(s) => writeln!(f, "version '{}' is not recognised", s),
     }
-  }
-}
-
-pub struct Encoded(SealedEncoded);
-
-impl SealedEncoded
-{
-  pub fn valid(self) -> Result<Encoded, SealedEncodedError>
-  {
-    use SealedEncodedError::*;
-
-    if self.version != Version00Coding::id() {
-      Err(UnrecognisedVersion(self.version))
-    } else if self.checksum != KNOMUL::hash(Version00Coding::hash_seed(), self.data.as_bytes()) {
-      Err(InvalidChecksum)
-    } else {
-      Ok(Encoded(self))
-    }
-  }
-}
-
-impl Encoded
-{
-  /// Base64 encoded data.
-  pub fn data(&self) -> &str
-  {
-    self.0.data.as_ref()
   }
 }

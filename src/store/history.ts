@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
-import { commits } from "@/service/history";
-import { History, Commit } from "../../dist/wasm";
+import { commits } from "@/service/game-over";
+import { GameOver, Commit } from "../../dist/wasm";
 
 interface State {
-  history: undefined | History;
+  history: undefined | GameOver;
 }
 
-export const useHistoryStore = defineStore("history", {
+export const useGameOverStore = defineStore("history", {
   state: () =>
     ({
       history: undefined,
@@ -27,7 +27,7 @@ export const useHistoryStore = defineStore("history", {
     },
   },
   actions: {
-    setHistory(history: History) {
+    setGameOver(history: GameOver) {
       this.history = history;
     },
   },
