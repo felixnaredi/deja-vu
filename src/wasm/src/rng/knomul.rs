@@ -60,3 +60,12 @@ impl KNOMUL
       .fold(seed, |c, &x| Self::permute_index(x as u64, c))
   }
 }
+
+#[test]
+fn f()
+{
+  println!(
+    "{}",
+    KNOMUL::hash(0, "initialized_with_new_works".as_bytes())
+  );
+}

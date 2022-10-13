@@ -1,6 +1,7 @@
 use crate::game::{
   Game,
-  INITIAL_LIVES_AMOUNT,
+  IncorrectCommits,
+  SeenThreshold,
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -60,13 +61,32 @@ impl<T> Commit<T>
 
 /// Represents a already played `Game`.
 #[derive(Clone, Debug)]
-pub struct History<T: 'static>(Game<T>);
+pub struct History<T>(Game<T>);
 
-impl<'a, T> From<Game<T>> for History<T>
+impl<T> From<Game<T>> for History<T>
 {
   fn from(game: Game<T>) -> Self
   {
     History(game)
+  }
+}
+
+impl<T> History<T>
+where
+  T: Clone + PartialEq,
+{
+  pub fn new(
+    seed: u64,
+    unseen: Vec<T>,
+    seen_threshold: SeenThreshold,
+    incorrect_commits: IncorrectCommits,
+  ) -> History<T>
+  {
+    let game = Game::new(seed, seen_threshold, unseen);
+    let mut iterator = History(game).into_iter();
+    iterator.incorrect_commits = incorrect_commits;
+    iterator.all(|_| true);
+    History(iterator.game)
   }
 }
 
@@ -77,15 +97,9 @@ impl<T> History<T>
     self.0.seed()
   }
 
-  pub fn incorrect_commits(&self) -> Vec<usize>
+  pub fn incorrect_commits(&self) -> IncorrectCommits
   {
-    self
-      .0
-      .incorrect_commits()
-      .into_iter()
-      .filter(|x| x.is_some())
-      .map(|x| x.unwrap().clone())
-      .collect()
+    self.0.incorrect_commits()
   }
 
   /// Final score of the game.
@@ -111,11 +125,11 @@ impl<T> History<T>
 
 /// Iterates over the commits done in a `Game`.
 #[derive(Debug)]
-pub struct HistoryIterator<T: 'static>
+pub struct HistoryIterator<T>
 {
   game: Game<T>,
   index: usize,
-  incorrect_commits: [Option<usize>; INITIAL_LIVES_AMOUNT],
+  incorrect_commits: IncorrectCommits,
   seen: Vec<T>,
 }
 

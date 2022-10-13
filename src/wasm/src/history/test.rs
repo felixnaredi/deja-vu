@@ -178,3 +178,17 @@ fn can_be_iterated_over_multiple_times()
     assert_eq!(commit.element(), element)
   }
 }
+
+#[test]
+fn initialized_with_new_works()
+{
+  let history = History::new(
+    13287618919374043026,
+    (0..64).collect(),
+    0.5.try_into().unwrap(),
+    [Some(14), Some(22), Some(35)],
+  );
+  assert_eq!(history.score(), 33);
+  assert_eq!(history.lives(), 0);
+  assert_eq!(history.incorrect_commits(), [Some(14), Some(22), Some(35)]);
+}

@@ -10,22 +10,20 @@
         <span>encore</span>
       </div>
     </gradient-button>
-    <!-- 
-      <history-table class="m-4" />
-
-    -->
+    <history-table class="m-4" />
   </div>
 </template>
 
 <script>
 import ResetArrow from "@/assets/ResetArrow.vue";
 import GradientButton from "@/components/GradientButton.vue";
-// import HistoryTable from "@/components/HistoryTable.vue";
+import HistoryTable from "@/components/HistoryTable.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import { useHistoryStore } from "@/store/history";
+import { Encoded } from "../../../dist/wasm";
 
 export default {
-  components: { ScoreBoard, ResetArrow, /* HistoryTable */ GradientButton },
+  components: { ScoreBoard, ResetArrow, HistoryTable, GradientButton },
   methods: {
     newGame() {
       window.location.href = process.env.BASE_URL;
@@ -34,6 +32,15 @@ export default {
   computed: {
     score: () => useHistoryStore().score,
     lives: () => useHistoryStore().lives,
+  },
+  created: () => {
+    fetch(`${process.env.BASE_URL}dictionary/fr01/words.json`).then((words) => {
+      words.json().then((words) => {
+        console.log(words);
+        const history = Encoded.decode(window.location.href, words);
+        useHistoryStore().setHistory(history);
+      });
+    });
   },
 };
 </script>

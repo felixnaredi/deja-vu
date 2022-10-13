@@ -21,7 +21,7 @@ export default {
   components: { HistoryTableRow },
   computed: {
     commits: () => {
-      return useHistoryStore().commits.map((value, index) => ({
+      return useHistoryStore().commits?.map((value, index) => ({
         index,
         value,
       }));

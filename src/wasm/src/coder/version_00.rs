@@ -37,7 +37,7 @@ impl Version00Coding
     base64::encode(serde_json::to_string(&self).unwrap())
   }
 
-  fn base64_decode(data: String) -> Result<Self, Box<dyn Error>>
+  fn base64_decode(data: &str) -> Result<Self, Box<dyn Error>>
   {
     Ok(serde_json::from_slice(base64::decode(data)?.as_slice())?)
   }
@@ -48,13 +48,15 @@ impl Version00Coding
   }
 
   pub fn encode<T>(history: &History<T>) -> Encoded
-  where
-    T: Serialize,
   {
     let version = Self {
       unseen_id: UnseenID::DictionaryFr01,
       seed: history.seed(),
-      incorrect_commits: history.incorrect_commits(),
+      incorrect_commits: vec![
+        history.incorrect_commits()[0].unwrap(),
+        history.incorrect_commits()[1].unwrap(),
+        history.incorrect_commits()[2].unwrap(),
+      ],
     };
 
     let data = version.base64_encode();
@@ -65,6 +67,23 @@ impl Version00Coding
       .data(data)
       .build()
       .unwrap()
+  }
+
+  pub fn decode<T>(encoded: Encoded, unseen: Vec<T>) -> Result<History<T>, Box<dyn Error>>
+  where
+    T: Clone + PartialEq,
+  {
+    let decoded = Self::base64_decode(encoded.data())?;
+    Ok(History::new(
+      decoded.seed,
+      unseen,
+      0.4.try_into()?,
+      [
+        Some(decoded.incorrect_commits[0]),
+        Some(decoded.incorrect_commits[1]),
+        Some(decoded.incorrect_commits[2]),
+      ],
+    ))
   }
 }
 
@@ -82,6 +101,6 @@ mod test
       incorrect_commits: vec![1, 5, 8],
     };
     let encode = x().base64_encode();
-    assert_eq!(Version00Coding::base64_decode(encode).unwrap(), x());
+    assert_eq!(Version00Coding::base64_decode(&encode).unwrap(), x());
   }
 }

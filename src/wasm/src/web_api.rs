@@ -1,11 +1,8 @@
-mod encode;
+mod encoded;
 mod game;
 mod history;
 
-pub use encode::{
-  encode,
-  Encoded,
-};
+pub use encoded::Encoded;
 pub use game::Game;
 pub use history::{
   Commit,

@@ -17,7 +17,7 @@
 import GradientButton from "@/components/GradientButton.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import { useGameStore } from "@/store/game";
-import { encode } from "../../../dist/wasm";
+import { Encoded } from "../../../dist/wasm";
 
 export default {
   components: { GradientButton, ScoreBoard },
@@ -43,7 +43,10 @@ export default {
       useGameStore().updateCurrentWord();
     },
     async goToHistory() {
-      console.log(encode((await useGameStore().game).intoHistory()));
+      const encoded = new Encoded((await useGameStore().game).intoHistory());
+      window.location.href = `${
+        process.env.BASE_URL
+      }history?${encoded.asURLSearchParams()}`;
     },
   },
   computed: {

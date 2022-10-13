@@ -87,6 +87,14 @@ impl From<game::Game<Inner>> for History
   }
 }
 
+impl From<history::History<Inner>> for History
+{
+  fn from(history: history::History<Inner>) -> Self
+  {
+    History(history)
+  }
+}
+
 #[allow(non_snake_case)]
 #[wasm_bindgen]
 impl History

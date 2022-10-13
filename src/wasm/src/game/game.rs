@@ -1,4 +1,7 @@
-use std::fmt::Display;
+use std::{
+  error::Error,
+  fmt::Display,
+};
 
 use crate::{
   game::{
@@ -12,12 +15,17 @@ const THRESHOLD_MAX: u32 = 1_000_000_000;
 
 pub const INITIAL_LIVES_AMOUNT: usize = 3;
 
+pub type IncorrectCommits = [Option<usize>; INITIAL_LIVES_AMOUNT];
+
 pub struct SeenThreshold(u32);
 
 #[derive(Debug)]
-pub struct SeenThresholdValueOutOfRange;
+pub enum SeenThresholdError
+{
+  ValueOutOfRange,
+}
 
-impl Display for SeenThresholdValueOutOfRange
+impl Display for SeenThresholdError
 {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
   {
@@ -29,14 +37,16 @@ impl Display for SeenThresholdValueOutOfRange
   }
 }
 
+impl Error for SeenThresholdError {}
+
 impl TryFrom<f64> for SeenThreshold
 {
-  type Error = SeenThresholdValueOutOfRange;
+  type Error = SeenThresholdError;
 
   fn try_from(value: f64) -> Result<Self, Self::Error>
   {
     if value < 0.0 || value > 1.0 {
-      Err(SeenThresholdValueOutOfRange)
+      Err(SeenThresholdError::ValueOutOfRange)
     } else {
       Ok(SeenThreshold((THRESHOLD_MAX as f64 * value) as u32))
     }
@@ -44,14 +54,14 @@ impl TryFrom<f64> for SeenThreshold
 }
 
 #[derive(Clone, Debug)]
-pub struct Game<T: 'static>
+pub struct Game<T>
 {
   seed: u64,
   unseen: Unseen<T>,
   seen: Vec<T>,
   current: Option<T>,
   previuos: Option<T>,
-  incorrect_commits: [Option<usize>; INITIAL_LIVES_AMOUNT],
+  incorrect_commits: IncorrectCommits,
   rng: Konadare192PxPlusPlus,
   seen_threshold: u32,
   count: usize,
@@ -106,7 +116,7 @@ impl<T> Game<T>
   }
 
   /// Indicies of incorrect commits.
-  pub fn incorrect_commits(&self) -> [Option<usize>; INITIAL_LIVES_AMOUNT]
+  pub fn incorrect_commits(&self) -> IncorrectCommits
   {
     self.incorrect_commits
   }
