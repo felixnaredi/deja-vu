@@ -13,15 +13,23 @@
         cursor-default
         select-none
       "
+      @click="goHome"
       >D'accueil</span
     >
   </div>
 </template>
 
 <script>
+import path from "@/service/path";
 export default {
   props: {
     message: String,
+  },
+  methods: {
+    goHome: () => {
+      console.log("goHome");
+      window.location.href = path(process.env.BASE_URL);
+    },
   },
 };
 </script>
