@@ -21,6 +21,7 @@ import HistoryTable from "@/components/HistoryTable.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import { useHistoryStore } from "@/store/history";
 import { Encoded } from "../../../dist/wasm";
+import path from "@/service/path";
 
 export default {
   components: { ScoreBoard, ResetArrow, HistoryTable, GradientButton },
@@ -34,13 +35,14 @@ export default {
     lives: () => useHistoryStore().lives,
   },
   created: () => {
-    fetch(`${process.env.BASE_URL}dictionary/fr01/words.json`).then((words) => {
-      words.json().then((words) => {
-        console.log(words);
-        const history = Encoded.decode(window.location.href, words);
-        useHistoryStore().setHistory(history);
-      });
-    });
+    fetch(path(process.env.BASE_URL, "dictionary", "fr01", "words.json")).then(
+      (words) => {
+        words.json().then((words) => {
+          const history = Encoded.decode(window.location.href, words);
+          useHistoryStore().setHistory(history);
+        });
+      }
+    );
   },
 };
 </script>

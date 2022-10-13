@@ -11,10 +11,10 @@ module.exports = defineConfig({
       template: path.resolve(__dirname, "public", "index.html"),
       filename: "index.html",
     },
-    history: {
-      entry: path.resolve(__dirname, "src", "pages", "history", "main.ts"),
+    "game-over": {
+      entry: path.resolve(__dirname, "src", "pages", "game-over", "main.ts"),
       template: path.resolve(__dirname, "public", "index.html"),
-      filename: "history/index.html",
+      filename: "game-over/index.html",
     },
   },
   configureWebpack: {

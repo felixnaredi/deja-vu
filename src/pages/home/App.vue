@@ -18,6 +18,7 @@ import GradientButton from "@/components/GradientButton.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import { useGameStore } from "@/store/game";
 import { Encoded } from "../../../dist/wasm";
+import path from "@/service/path";
 
 export default {
   components: { GradientButton, ScoreBoard },
@@ -44,9 +45,10 @@ export default {
     },
     async goToHistory() {
       const encoded = new Encoded((await useGameStore().game).intoHistory());
-      window.location.href = `${
-        process.env.BASE_URL
-      }history?${encoded.asURLSearchParams()}`;
+      window.location.href = `${path(
+        process.env.BASE_URL,
+        "game-over"
+      )}?${encoded.asURLSearchParams()}`;
     },
   },
   computed: {
