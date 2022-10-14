@@ -67,7 +67,7 @@ export default {
   }),
   methods: {
     newGame() {
-      window.location.href = process.env.BASE_URL;
+      window.location.href = path(process.env.BASE_URL);
     },
   },
   computed: {

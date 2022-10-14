@@ -29,7 +29,6 @@ export default {
   },
   methods: {
     goHome: () => {
-      console.log("goHome");
       window.location.href = path(process.env.BASE_URL);
     },
   },
