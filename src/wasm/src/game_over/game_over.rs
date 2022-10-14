@@ -20,7 +20,7 @@ pub enum SeenUnseen
 /// TODO:
 ///   It should be possible for `element` to have type `&T`. I don't know if it will matter for the
 ///   web api.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Commit<T>
 {
   element: T,

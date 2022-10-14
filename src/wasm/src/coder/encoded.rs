@@ -1,3 +1,6 @@
+#[cfg(test)]
+mod test;
+
 use std::fmt::Display;
 
 use serde::{
@@ -15,6 +18,7 @@ use crate::{
 // -------------------------------------------------------------------------------------------------
 
 /// Access to the encoded `data`.
+#[derive(Debug)]
 pub struct Encoded(SealedEncoded);
 
 impl Encoded
@@ -48,10 +52,10 @@ impl TryFrom<SealedEncoded> for Encoded
   {
     use SealedEncodedError::*;
 
-    if s.checksum != KNOMUL::hash(Version00Coding::hash_seed(), s.data.as_bytes()) {
-      Err(InvalidChecksum)
-    } else if s.version != Version00Coding::id() {
+    if s.version != Version00Coding::id() {
       Err(UnrecognisedVersion(s.version))
+    } else if s.checksum != KNOMUL::hash(Version00Coding::hash_seed(), s.data.as_bytes()) {
+      Err(InvalidChecksum)
     } else {
       Ok(Encoded(s))
     }
