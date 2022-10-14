@@ -1,20 +1,19 @@
 <!-- eslint-disable -->
 <template>
   <div v-if="errorMessage.length > 0">
-    <div
-      class="
-        fixed
-        top-0
-        w-screen
-        z-20
-        grid grid-cols-12
-        mt-20
-        opacity-95
-        hover:opacity-100
-      "
-    >
+    <div class="fixed top-0 w-screen z-20 grid grid-cols-12 mt-20">
       <div class="col-span-3"></div>
-      <div class="col-span-6 w-full">
+      <div
+        class="
+          col-span-6
+          w-full
+          transition
+          ease-in
+          opacity-90
+          duration-500
+          hover:opacity-100
+        "
+      >
         <error-sign class="mt-15"
           ><p>{{ errorMessage }}</p></error-sign
         >

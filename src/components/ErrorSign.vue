@@ -1,6 +1,14 @@
 <!-- eslint-disable -->
 <template>
-  <div class="p-8 bg-amber-200 border-solid border-2 border-sky-500">
+  <div
+    class="
+      p-8
+      bg-gradient-to-t
+      from-amber-200
+      to-amber-100
+      border-solid border-2 border-sky-500
+    "
+  >
     <h1 class="text-red-500 font-bold text-lg mb-3">Error</h1>
     <div class="mb-16">
       <slot>{{ message }}</slot>
