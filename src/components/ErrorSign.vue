@@ -7,6 +7,11 @@
       from-amber-200
       to-amber-100
       border-solid border-2 border-sky-500
+      transition
+      ease-in
+      opacity-90
+      duration-500
+      hover:opacity-100
     "
   >
     <h1 class="text-red-500 font-bold text-lg mb-3">Error</h1>

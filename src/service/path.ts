@@ -5,7 +5,6 @@ export default function (...args: string[]): string {
       return s1.endsWith("/") ? s1.substring(0, s1.length - 1) : s1;
     };
     return `/${args
-      .slice(1)
       .map(trim)
       .filter((x) => x!.length > 0)
       .join("/")}`;

@@ -3,17 +3,7 @@
   <div v-if="errorMessage.length > 0">
     <div class="fixed top-0 w-screen z-20 grid grid-cols-12 mt-20">
       <div class="col-span-3"></div>
-      <div
-        class="
-          col-span-6
-          w-full
-          transition
-          ease-in
-          opacity-90
-          duration-500
-          hover:opacity-100
-        "
-      >
+      <div class="col-span-6 w-full">
         <error-sign class="mt-15"
           ><p>{{ errorMessage }}</p></error-sign
         >
@@ -81,6 +71,7 @@ export default {
             const history = Encoded.decode(window.location.href, words);
             useGameOverStore().setGameOver(history);
           } catch (error) {
+            /* eslint-disable-next-line no-console */
             console.error(`Error: Encoded.decode -  ${error}`);
             this.errorMessage = error;
           }
