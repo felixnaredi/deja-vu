@@ -1,4 +1,7 @@
-use super::knomul::KNOMUL;
+use crate::rng::{
+  IndexedPermutation,
+  KNOMUL,
+};
 
 const KONADARE192_INC: u64 = 0xBB67AE8584CAA73B;
 

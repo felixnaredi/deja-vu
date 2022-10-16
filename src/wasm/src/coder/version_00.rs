@@ -15,7 +15,10 @@ use crate::{
     unseen_id::UnseenID,
   },
   game_over::GameOver,
-  rng::KNOMUL,
+  rng::{
+    IndexedPermutation,
+    KNOMUL,
+  },
 };
 
 /// `Version00Coding` is a simple coding format that can restore played games.

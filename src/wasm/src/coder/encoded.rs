@@ -10,7 +10,10 @@ use serde::{
 
 use crate::{
   coder::Version00Coding,
-  rng::KNOMUL,
+  rng::{
+    IndexedPermutation,
+    KNOMUL,
+  },
 };
 
 // -------------------------------------------------------------------------------------------------
