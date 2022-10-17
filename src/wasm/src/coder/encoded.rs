@@ -9,12 +9,33 @@ use serde::{
 };
 
 use crate::{
-  coder::Version00Coding,
+  coder::{
+    GameOverCoderV01,
+    Version00Coding,
+  },
+  game_over::GameOver,
   rng::{
     IndexedPermutation,
     KNOMUL,
   },
 };
+
+// -------------------------------------------------------------------------------------------------
+// Coder
+// -------------------------------------------------------------------------------------------------
+
+pub trait GameOverCoder
+{
+  type Error;
+
+  fn version() -> &'static str;
+  fn checksum(data: &[u8]) -> u64;
+  fn encode<T>(game_over: GameOver<T>) -> Result<String, Self::Error>;
+  fn decode<T: PartialEq + Clone + AsRef<[u8]>>(
+    data: String,
+    unseen: Vec<T>,
+  ) -> Result<GameOver<T>, Self::Error>;
+}
 
 // -------------------------------------------------------------------------------------------------
 // Encoded
@@ -47,6 +68,21 @@ pub struct SealedEncodedGameOver
   data: String,
 }
 
+impl SealedEncodedGameOver
+{
+  // TODO:
+  //   This function is missing tests.
+  pub fn new<E: GameOverCoder, T>(game_over: GameOver<T>)
+    -> Result<SealedEncodedGameOver, E::Error>
+  {
+    E::encode(game_over).map(|data| SealedEncodedGameOver {
+      version: E::version().into(),
+      checksum: E::checksum(data.as_bytes()),
+      data,
+    })
+  }
+}
+
 impl TryFrom<SealedEncodedGameOver> for EncodedGameOver
 {
   type Error = SealedEncodedError;
@@ -61,6 +97,34 @@ impl TryFrom<SealedEncodedGameOver> for EncodedGameOver
       Err(InvalidChecksum)
     } else {
       Ok(EncodedGameOver(s))
+    }
+  }
+}
+
+impl<T> TryFrom<(SealedEncodedGameOver, Vec<T>)> for GameOver<T>
+where
+  T: Clone + PartialEq + AsRef<[u8]>,
+{
+  type Error = Box<dyn std::error::Error>;
+
+  fn try_from((s, unseen): (SealedEncodedGameOver, Vec<T>)) -> Result<GameOver<T>, Self::Error>
+  {
+    use SealedEncodedError::*;
+
+    if s.version == Version00Coding::id() {
+      if s.checksum == KNOMUL::hash(Version00Coding::hash_seed(), s.data.as_bytes()) {
+        Ok(Version00Coding::decode(EncodedGameOver(s), unseen)?)
+      } else {
+        Err(Box::new(InvalidChecksum))
+      }
+    } else if s.version == GameOverCoderV01::version() {
+      if s.checksum == GameOverCoderV01::checksum(s.data.as_bytes()) {
+        Ok(GameOverCoderV01::decode(s.data, unseen)?)
+      } else {
+        Err(Box::new(InvalidChecksum))
+      }
+    } else {
+      Err(Box::new(UnrecognisedVersion(s.version)))
     }
   }
 }
@@ -88,3 +152,5 @@ impl Display for SealedEncodedError
     }
   }
 }
+
+impl std::error::Error for SealedEncodedError {}

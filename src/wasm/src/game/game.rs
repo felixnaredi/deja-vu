@@ -6,6 +6,11 @@ use std::{
   fmt::Display,
 };
 
+use serde::{
+  Deserialize,
+  Serialize,
+};
+
 use crate::{
   coder::UnseenSetID,
   game::{
@@ -26,6 +31,7 @@ pub const INITIAL_LIVES_AMOUNT: usize = 3;
 
 pub type IncorrectCommits = [Option<usize>; INITIAL_LIVES_AMOUNT];
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct SeenThreshold(u32);
 
 #[derive(Debug)]
@@ -179,6 +185,11 @@ impl<T> Game<T>
   pub fn unseen_set_id(&self) -> &UnseenSetID
   {
     &self.unseen_set_id
+  }
+
+  pub fn seen_threshold(&self) -> SeenThreshold
+  {
+    SeenThreshold(self.seen_threshold)
   }
 }
 

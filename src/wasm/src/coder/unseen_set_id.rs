@@ -21,8 +21,8 @@ impl UnseenSetID
     use UnseenSetID::*;
 
     match self {
-      Unspecified => 0,
-      DictionaryFr01 => 1,
+      Unspecified => 7359453237177161485,
+      DictionaryFr01 => 16775286842649692529,
     }
   }
 }

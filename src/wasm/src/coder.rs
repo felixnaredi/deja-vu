@@ -8,6 +8,6 @@ pub use encoded::{
 };
 pub use unseen_set_id::UnseenSetID;
 pub use version::{
-  GameOverCodingV01,
+  GameOverCoderV01,
   Version00Coding,
 };

@@ -127,6 +127,16 @@ impl<T> GameOver<T>
   {
     self.0.element_checksum()
   }
+
+  pub fn unseen_set_id(&self) -> &UnseenSetID
+  {
+    self.0.unseen_set_id()
+  }
+
+  pub fn seen_threshold(&self) -> SeenThreshold
+  {
+    self.0.seen_threshold()
+  }
 }
 
 // -------------------------------------------------------------------------------------------------
