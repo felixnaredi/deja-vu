@@ -117,6 +117,12 @@ impl<T> GameOver<T>
   {
     self.0.lives()
   }
+
+  /// The checksum of the generated elements.
+  pub fn element_checksum(&self) -> u64
+  {
+    self.0.element_checksum()
+  }
 }
 
 // -------------------------------------------------------------------------------------------------

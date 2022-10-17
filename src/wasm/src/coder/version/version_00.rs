@@ -12,7 +12,7 @@ use crate::{
       SealedEncodedGameOver,
       SealedEncodedGameOverBuilder,
     },
-    unseen_id::UnseenID,
+    unseen_id::UnseenSetID,
   },
   game_over::GameOver,
   rng::{
@@ -25,7 +25,7 @@ use crate::{
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Version00Coding
 {
-  unseen_id: UnseenID,
+  unseen_id: UnseenSetID,
   seed: u64,
   incorrect_commits: Vec<usize>,
 }
@@ -58,7 +58,7 @@ impl Version00Coding
   pub fn encode<T>(game_over: &GameOver<T>) -> SealedEncodedGameOver
   {
     let version = Self {
-      unseen_id: UnseenID::DictionaryFr01,
+      unseen_id: UnseenSetID::DictionaryFr01,
       seed: game_over.seed(),
       incorrect_commits: vec![
         game_over.incorrect_commits()[0].unwrap(),
@@ -112,7 +112,7 @@ mod test
   fn data_can_be_base64_encoded_and_decoded()
   {
     let x = || Version00Coding {
-      unseen_id: UnseenID::DictionaryFr01,
+      unseen_id: UnseenSetID::DictionaryFr01,
       seed: 3732249406730752636,
       incorrect_commits: vec![36, 40, 57],
     };

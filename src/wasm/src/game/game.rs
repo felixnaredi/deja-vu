@@ -18,9 +18,9 @@ use crate::{
   },
 };
 
-const DEFAULT_ELEMENT_CHECKSUM: u64 = 2636128771936786712;
 const THRESHOLD_MAX: u32 = 1_000_000_000;
 
+pub const DEFAULT_ELEMENT_CHECKSUM: u64 = 2636128771936786712;
 pub const INITIAL_LIVES_AMOUNT: usize = 3;
 
 pub type IncorrectCommits = [Option<usize>; INITIAL_LIVES_AMOUNT];
