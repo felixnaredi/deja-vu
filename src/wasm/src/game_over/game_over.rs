@@ -1,7 +1,10 @@
-use crate::game::{
-  Game,
-  IncorrectCommits,
-  SeenThreshold,
+use crate::{
+  coder::UnseenSetID,
+  game::{
+    Game,
+    IncorrectCommits,
+    SeenThreshold,
+  },
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -77,12 +80,13 @@ where
 {
   pub fn new(
     seed: u64,
+    unseen_set_id: UnseenSetID,
     unseen: Vec<T>,
     seen_threshold: SeenThreshold,
     incorrect_commits: IncorrectCommits,
   ) -> GameOver<T>
   {
-    let game = Game::new(seed, seen_threshold, unseen);
+    let game = Game::new(seed, seen_threshold, unseen_set_id, unseen);
     let mut iterator = GameOver(game).into_iter();
     iterator.incorrect_commits = incorrect_commits;
     iterator.all(|_| true);

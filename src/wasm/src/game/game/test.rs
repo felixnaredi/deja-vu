@@ -15,6 +15,7 @@ fn commit_errors_when_empty()
   let mut game = Game::new(
     10539,
     0.4.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     (0..1).map(|x| [x]).collect(),
   );
   assert_eq!(game.commit_seen(), Err(GameError::EmptyCommit));
@@ -27,6 +28,7 @@ fn next_throws_errors_with_uncommited_results()
   let mut game = Game::new(
     11484,
     0.0.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     (0..2).map(|x| [x]).collect(),
   );
   assert!(matches!(game.next(), Ok(_)));
@@ -35,6 +37,7 @@ fn next_throws_errors_with_uncommited_results()
   let mut game = Game::new(
     11898,
     1.0.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     (0..2).map(|x| [x]).collect(),
   );
   assert!(matches!(game.next(), Ok(_)));
@@ -47,6 +50,7 @@ fn three_strikes_guessing_seen_causes_game_over()
   let mut game = Game::new(
     12584,
     0.0.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     (0..4).map(|x| [x]).collect(),
   );
   for _ in 0..3 {
@@ -64,6 +68,7 @@ fn three_strikes_guessing_unseen_causes_game_over()
   let mut game = Game::new(
     12554,
     1.0.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     (0..4).map(|x| [x]).collect(),
   );
 
@@ -86,7 +91,12 @@ fn three_strikes_guessing_unseen_causes_game_over()
 fn next_unseen_returns_unique_and_errors_when_empty()
 {
   let n = 16;
-  let mut game = Game::new(6237, 0.0.try_into().unwrap(), (0..n).map(|x| [x]).collect());
+  let mut game = Game::new(
+    6237,
+    0.0.try_into().unwrap(),
+    UnseenSetID::Unspecified,
+    (0..n).map(|x| [x]).collect(),
+  );
   let mut s = HashSet::new();
 
   for _ in 0..n {
@@ -102,12 +112,18 @@ fn next_unseen_returns_unique_and_errors_when_empty()
 #[test]
 fn next_seen_returns_error_when_too_few_elements()
 {
-  let mut game = Game::new(8833, 1.0.try_into().unwrap(), (0..0).map(|x| [x]).collect());
+  let mut game = Game::new(
+    8833,
+    1.0.try_into().unwrap(),
+    UnseenSetID::Unspecified,
+    (0..0).map(|x| [x]).collect(),
+  );
   assert!(matches!(game.next(), Err(_)));
 
   let mut game = Game::new(
     19119,
     1.0.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     (0..1).map(|x| [x]).collect(),
   );
   assert!(matches!(game.next(), Ok(_)));
@@ -120,11 +136,13 @@ fn next_generates_equal_output_for_equal_input()
   let mut game1 = Game::new(
     10335,
     0.5.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     (0..16).map(|x| [x]).collect(),
   );
   let mut game2 = Game::new(
     10335,
     0.5.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     (0..16).map(|x| [x]).collect(),
   );
 
@@ -144,6 +162,7 @@ fn next_never_generates_same_twice_in_a_row()
   let mut game = Game::new(
     10335,
     1.0.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     (0..4).map(|x| [x]).collect(),
   );
   let mut previous = game.next().unwrap().clone();
@@ -161,6 +180,7 @@ fn score_increases_on_correct_commit()
   let mut game = Game::new(
     11976,
     0.5.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     (0..8).map(|x| [x]).collect(),
   );
   for (score, guess_seen) in [
@@ -189,6 +209,7 @@ fn life_decrease_on_incorrect_commit()
   let mut game = Game::new(
     211391,
     0.5.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     (0..8).map(|x| [x]).collect(),
   );
   for (lives, guess_seen) in [
@@ -222,6 +243,7 @@ fn indices_are_same_as_incorrect_commits()
   let mut game = Game::new(
     877326994,
     0.5.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     (0..16).map(|x| [x]).collect(),
   );
   let guess_seen = [2, 3, 5, 6, 11];
@@ -252,6 +274,7 @@ fn after_reseting_a_game_it_produces_same_output_given_same_input()
   let mut game = Game::new(
     6314949274223572360,
     0.4.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     (0..32).map(|x| [x]).collect(),
   );
   let guess_seen = [4, 5, 8, 12, 17, 18, 19, 20, 21, 22, 24, 25];
@@ -292,6 +315,7 @@ fn element_checksum_outputs_as_expected()
   let mut game = Game::new(
     9004491465204253423,
     0.3.try_into().unwrap(),
+    UnseenSetID::Unspecified,
     vec![
       "4hYKvDtHGSo=",
       "/QaJrz+CL/Q=",
@@ -312,7 +336,10 @@ fn element_checksum_outputs_as_expected()
     ],
   );
 
-  let mut s = DEFAULT_ELEMENT_CHECKSUM;
+  let mut s = KSINK::permute_index(
+    UnseenSetID::Unspecified.unique_number(),
+    DEFAULT_ELEMENT_CHECKSUM,
+  );
   assert_eq!(s, game.element_checksum());
 
   let mut m = 0;

@@ -12,7 +12,7 @@ use crate::{
       SealedEncodedGameOver,
       SealedEncodedGameOverBuilder,
     },
-    unseen_id::UnseenSetID,
+    unseen_set_id::UnseenSetID,
   },
   game_over::GameOver,
   rng::{
@@ -86,6 +86,7 @@ impl Version00Coding
     let decoded = Self::base64_decode(encoded.data())?;
     Ok(GameOver::new(
       decoded.seed,
+      UnseenSetID::DictionaryFr01,
       unseen,
       0.4.try_into()?,
       [
@@ -127,6 +128,7 @@ mod test
 
     let game_over = GameOver::new(
       7789954068733337566,
+      UnseenSetID::DictionaryFr01,
       unseen.clone(),
       0.4.try_into().unwrap(),
       [Some(36), Some(40), Some(57)],

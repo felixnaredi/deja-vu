@@ -2,7 +2,10 @@ use std::iter;
 
 use super::*;
 use crate::{
-  coder::Version00Coding,
+  coder::{
+    UnseenSetID,
+    Version00Coding,
+  },
   game_over::GameOver,
 };
 
@@ -13,6 +16,7 @@ fn encode_decode_same_as_id()
 
   let game_over = GameOver::new(
     2313308731114687875,
+    UnseenSetID::Unspecified,
     unseen.clone(),
     0.4.try_into().unwrap(),
     [Some(1), Some(24), Some(30)],
@@ -35,6 +39,7 @@ fn modifying_checksum_throws_invalid_checksum_error()
 
   let game_over = GameOver::new(
     2313308731114687875,
+    UnseenSetID::Unspecified,
     unseen.clone(),
     0.4.try_into().unwrap(),
     [Some(16), Some(30), Some(34)],
@@ -57,6 +62,7 @@ fn modifying_data_throws_invalid_checksum_error()
 
   let game_over = GameOver::new(
     2313308731114687875,
+    UnseenSetID::Unspecified,
     unseen.clone(),
     0.4.try_into().unwrap(),
     [Some(21), Some(46), Some(47)],
@@ -86,6 +92,7 @@ fn invalid_version_throws_unrecognised_version_error()
 
   let game_over = GameOver::new(
     2313308731114687875,
+    UnseenSetID::Unspecified,
     unseen.clone(),
     0.4.try_into().unwrap(),
     [Some(22), Some(42), Some(49)],

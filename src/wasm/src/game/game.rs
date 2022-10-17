@@ -7,6 +7,7 @@ use std::{
 };
 
 use crate::{
+  coder::UnseenSetID,
   game::{
     GameError,
     Unseen,
@@ -73,13 +74,22 @@ pub struct Game<T>
   rng: Konadare192PxPlusPlus,
   seen_threshold: u32,
   count: usize,
+
+  // TODO:
+  //   The unit tests does not offer full coverage for the fields below.
+  unseen_set_id: UnseenSetID,
   element_checksum: u64,
 }
 
 impl<T> Game<T>
 {
   /// Create a new game.
-  pub fn new(seed: u64, seen_threshold: SeenThreshold, unseen: Vec<T>) -> Game<T>
+  pub fn new(
+    seed: u64,
+    seen_threshold: SeenThreshold,
+    unseen_set_id: UnseenSetID,
+    unseen: Vec<T>,
+  ) -> Game<T>
   {
     Game {
       seed,
@@ -91,7 +101,11 @@ impl<T> Game<T>
       rng: Konadare192PxPlusPlus::from_seed(seed),
       seen_threshold: seen_threshold.0,
       count: 0,
-      element_checksum: DEFAULT_ELEMENT_CHECKSUM,
+      element_checksum: KSINK::permute_index(
+        unseen_set_id.unique_number(),
+        DEFAULT_ELEMENT_CHECKSUM,
+      ),
+      unseen_set_id,
     }
   }
 
@@ -107,7 +121,8 @@ impl<T> Game<T>
     }
     self.rng = Konadare192PxPlusPlus::from_seed(self.seed);
     self.count = 0;
-    self.element_checksum = DEFAULT_ELEMENT_CHECKSUM;
+    self.element_checksum =
+      KSINK::permute_index(self.unseen_set_id.unique_number(), DEFAULT_ELEMENT_CHECKSUM);
   }
 
   /// Returns how many lives the game has left.
@@ -158,6 +173,12 @@ impl<T> Game<T>
   pub fn element_checksum(&self) -> u64
   {
     self.element_checksum
+  }
+
+  /// The `UnseenSetID` of the `Game`.
+  pub fn unseen_set_id(&self) -> &UnseenSetID
+  {
+    &self.unseen_set_id
   }
 }
 
