@@ -1,3 +1,6 @@
+#[cfg(test)]
+mod test;
+
 use std::{
   error::Error,
   fmt::Display,
@@ -8,9 +11,14 @@ use crate::{
     GameError,
     Unseen,
   },
-  rng::Konadare192PxPlusPlus,
+  rng::{
+    IndexedPermutation,
+    Konadare192PxPlusPlus,
+    KSINK,
+  },
 };
 
+const DEFAULT_ELEMENT_CHECKSUM: u64 = 2636128771936786712;
 const THRESHOLD_MAX: u32 = 1_000_000_000;
 
 pub const INITIAL_LIVES_AMOUNT: usize = 3;
@@ -65,6 +73,7 @@ pub struct Game<T>
   rng: Konadare192PxPlusPlus,
   seen_threshold: u32,
   count: usize,
+  element_checksum: u64,
 }
 
 impl<T> Game<T>
@@ -82,6 +91,7 @@ impl<T> Game<T>
       rng: Konadare192PxPlusPlus::from_seed(seed),
       seen_threshold: seen_threshold.0,
       count: 0,
+      element_checksum: DEFAULT_ELEMENT_CHECKSUM,
     }
   }
 
@@ -97,6 +107,7 @@ impl<T> Game<T>
     }
     self.rng = Konadare192PxPlusPlus::from_seed(self.seed);
     self.count = 0;
+    self.element_checksum = DEFAULT_ELEMENT_CHECKSUM;
   }
 
   /// Returns how many lives the game has left.
@@ -142,11 +153,17 @@ impl<T> Game<T>
       Ok(())
     }
   }
+
+  /// The checksum of the generated elements.
+  pub fn element_checksum(&self) -> u64
+  {
+    self.element_checksum
+  }
 }
 
 impl<T> Game<T>
 where
-  T: Clone + PartialEq,
+  T: Clone + PartialEq + AsRef<[u8]>,
 {
   /// Generates the next value.
   pub fn next(&mut self) -> Result<&T, GameError>
@@ -172,13 +189,15 @@ where
 
   fn next_unseen(&mut self) -> Result<&T, GameError>
   {
-    self.current = Some(
-      self
-        .unseen
-        .poll(&mut self.rng)
-        .map(|x| x.clone())
-        .ok_or(GameError::UnseenEmpty)?,
-    );
+    let x = self
+      .unseen
+      .poll(&mut self.rng)
+      .map(|x| x.clone())
+      .ok_or(GameError::UnseenEmpty)?;
+
+    self.element_checksum = KSINK::hash(self.element_checksum, x.as_ref());
+    self.current = Some(x);
+
     Ok(self.current.as_ref().unwrap())
   }
 
@@ -193,6 +212,10 @@ where
         break;
       }
     }
+    self.element_checksum = KSINK::hash(
+      self.element_checksum,
+      self.current.as_ref().unwrap().as_ref(),
+    );
     Ok(self.current.as_ref().unwrap())
   }
 

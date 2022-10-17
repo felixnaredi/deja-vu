@@ -9,7 +9,7 @@ use crate::{
 #[test]
 fn encode_decode_same_as_id()
 {
-  let unseen: Vec<i32> = (0..64).collect();
+  let unseen: Vec<[u8; 1]> = (0..64).map(|x| [x]).collect();
 
   let game_over = GameOver::new(
     2313308731114687875,
@@ -31,7 +31,7 @@ fn encode_decode_same_as_id()
 #[test]
 fn modifying_checksum_throws_invalid_checksum_error()
 {
-  let unseen: Vec<i32> = (0..64).collect();
+  let unseen: Vec<[u8; 1]> = (0..64).map(|x| [x]).collect();
 
   let game_over = GameOver::new(
     2313308731114687875,
@@ -53,7 +53,7 @@ fn modifying_checksum_throws_invalid_checksum_error()
 #[test]
 fn modifying_data_throws_invalid_checksum_error()
 {
-  let unseen: Vec<i32> = (0..64).collect();
+  let unseen: Vec<[u8; 1]> = (0..64).map(|x| [x]).collect();
 
   let game_over = GameOver::new(
     2313308731114687875,
@@ -82,7 +82,7 @@ fn modifying_data_throws_invalid_checksum_error()
 #[test]
 fn invalid_version_throws_unrecognised_version_error()
 {
-  let unseen: Vec<i32> = (0..64).collect();
+  let unseen: Vec<[u8; 1]> = (0..64).map(|x| [x]).collect();
 
   let game_over = GameOver::new(
     2313308731114687875,

@@ -2,9 +2,6 @@ mod game;
 mod game_error;
 mod unseen;
 
-#[cfg(test)]
-mod test;
-
 pub use game::{
   Game,
   IncorrectCommits,

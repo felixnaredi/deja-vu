@@ -81,7 +81,7 @@ impl Version00Coding
   /// currupt.
   pub fn decode<T>(encoded: EncodedGameOver, unseen: Vec<T>) -> Result<GameOver<T>, Box<dyn Error>>
   where
-    T: Clone + PartialEq,
+    T: Clone + PartialEq + AsRef<[u8]>,
   {
     let decoded = Self::base64_decode(encoded.data())?;
     Ok(GameOver::new(
@@ -123,7 +123,7 @@ mod test
   #[test]
   fn encode_decode_is_equal_to_id_for_game_over()
   {
-    let unseen: Vec<u32> = (0..64).collect();
+    let unseen: Vec<[u8; 1]> = (0..64).map(|x| [x]).collect();
 
     let game_over = GameOver::new(
       7789954068733337566,

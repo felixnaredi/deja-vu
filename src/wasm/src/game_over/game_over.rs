@@ -73,7 +73,7 @@ impl<T> From<Game<T>> for GameOver<T>
 
 impl<T> GameOver<T>
 where
-  T: Clone + PartialEq,
+  T: Clone + PartialEq + AsRef<[u8]>,
 {
   pub fn new(
     seed: u64,
@@ -135,7 +135,7 @@ pub struct GameOverIterator<T>
 
 impl<T> Iterator for GameOverIterator<T>
 where
-  T: Clone + PartialEq,
+  T: Clone + PartialEq + AsRef<[u8]>,
 {
   type Item = Commit<T>;
 

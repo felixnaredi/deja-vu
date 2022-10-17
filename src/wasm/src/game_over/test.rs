@@ -16,7 +16,7 @@ use crate::{
 
 fn run_game<T>(game: &mut Game<T>, guess_seen: &[usize]) -> Vec<T>
 where
-  T: Clone + PartialEq,
+  T: Clone + PartialEq + AsRef<[u8]>,
 {
   let mut s = Vec::new();
   let mut i = 0;
@@ -40,7 +40,7 @@ fn correct_when_always_commiting_seen()
   let mut game = Game::new(
     10000179183556691969,
     0.5.try_into().unwrap(),
-    (0..16).collect(),
+    (0..16).map(|x| [x]).collect(),
   );
   let mut elements = LinkedList::new();
 
@@ -85,7 +85,7 @@ fn correct_when_always_commiting_unseen()
   let mut game = Game::new(
     17230744205331056885,
     0.5.try_into().unwrap(),
-    (0..16).collect(),
+    (0..16).map(|x| [x]).collect(),
   );
   let mut elements = LinkedList::new();
 
@@ -128,7 +128,7 @@ fn correct_for_a_somewhat_realistic_game()
   let mut game = Game::new(
     8217158024524860960,
     0.25.try_into().unwrap(),
-    (0..64).collect(),
+    (0..64).map(|x| [x]).collect(),
   );
   let elements = run_game(&mut game, &[4, 22, 23, 25, 26, 31, 32, 34, 37, 38]);
 
@@ -165,7 +165,7 @@ fn can_be_iterated_over_multiple_times()
   let mut game = Game::new(
     10648384310693818260,
     0.4.try_into().unwrap(),
-    (0..32).collect(),
+    (0..32).map(|x| [x]).collect(),
   );
   let elements = run_game(&mut game, &[3, 7, 8, 13, 21, 23, 24]);
 
@@ -184,7 +184,7 @@ fn initialized_with_new_works()
 {
   let game_over = GameOver::new(
     13287618919374043026,
-    (0..64).collect(),
+    (0..64).map(|x| [x]).collect(),
     0.5.try_into().unwrap(),
     [Some(14), Some(22), Some(35)],
   );
