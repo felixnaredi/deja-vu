@@ -8,9 +8,9 @@ use serde::{
 use crate::{
   coder::{
     encoded::{
-      Encoded,
-      SealedEncoded,
-      SealedEncodedBuilder,
+      EncodedGameOver,
+      SealedEncodedGameOver,
+      SealedEncodedGameOverBuilder,
     },
     unseen_id::UnseenID,
   },
@@ -55,7 +55,7 @@ impl Version00Coding
   }
 
   /// Encodes `game_over`.
-  pub fn encode<T>(game_over: &GameOver<T>) -> SealedEncoded
+  pub fn encode<T>(game_over: &GameOver<T>) -> SealedEncodedGameOver
   {
     let version = Self {
       unseen_id: UnseenID::DictionaryFr01,
@@ -69,7 +69,7 @@ impl Version00Coding
 
     let data = version.base64_encode();
 
-    SealedEncodedBuilder::default()
+    SealedEncodedGameOverBuilder::default()
       .version(Self::id().into())
       .checksum(KNOMUL::hash(Self::hash_seed(), data.as_bytes()))
       .data(data)
@@ -79,7 +79,7 @@ impl Version00Coding
 
   /// Decodes `encoded`, restoring the encoded `GameOver<T>`. Fails if the serialized `data` is
   /// currupt.
-  pub fn decode<T>(encoded: Encoded, unseen: Vec<T>) -> Result<GameOver<T>, Box<dyn Error>>
+  pub fn decode<T>(encoded: EncodedGameOver, unseen: Vec<T>) -> Result<GameOver<T>, Box<dyn Error>>
   where
     T: Clone + PartialEq,
   {

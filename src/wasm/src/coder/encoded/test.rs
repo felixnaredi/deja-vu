@@ -45,7 +45,7 @@ fn modifying_checksum_throws_invalid_checksum_error()
   encoded.checksum ^= KNOMUL::permute_index(encoded.checksum, 12228011056065030022);
 
   assert_eq!(
-    Encoded::try_from(encoded).unwrap_err().to_string(),
+    EncodedGameOver::try_from(encoded).unwrap_err().to_string(),
     SealedEncodedError::InvalidChecksum.to_string()
   );
 }
@@ -74,7 +74,7 @@ fn modifying_data_throws_invalid_checksum_error()
   encoded.data = String::from_utf8(b).unwrap();
 
   assert_eq!(
-    Encoded::try_from(encoded).unwrap_err().to_string(),
+    EncodedGameOver::try_from(encoded).unwrap_err().to_string(),
     SealedEncodedError::InvalidChecksum.to_string()
   );
 }
@@ -108,7 +108,7 @@ fn invalid_version_throws_unrecognised_version_error()
   encoded.data = String::from_utf8(b).unwrap();
 
   assert_eq!(
-    Encoded::try_from(encoded).unwrap_err().to_string(),
+    EncodedGameOver::try_from(encoded).unwrap_err().to_string(),
     SealedEncodedError::UnrecognisedVersion("bad-version".into()).to_string()
   );
 }

@@ -9,7 +9,7 @@ mod web_api;
 
 pub use web_api::{
   Commit,
-  Encoded,
+  EncodedGameOver,
   Game,
   GameOver,
 };

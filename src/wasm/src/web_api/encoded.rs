@@ -7,23 +7,23 @@ use wasm_bindgen::prelude::{
 use crate::{
   coder::{
     self,
-    SealedEncoded,
+    SealedEncodedGameOver,
     Version00Coding,
   },
   web_api,
 };
 
 #[wasm_bindgen]
-pub struct Encoded(coder::SealedEncoded);
+pub struct EncodedGameOver(coder::SealedEncodedGameOver);
 
 #[allow(non_snake_case)]
 #[wasm_bindgen]
-impl Encoded
+impl EncodedGameOver
 {
   #[wasm_bindgen(constructor)]
-  pub fn new(game_over: &web_api::GameOver) -> Encoded
+  pub fn new(game_over: &web_api::GameOver) -> EncodedGameOver
   {
-    Encoded(Version00Coding::encode(game_over.inner()))
+    EncodedGameOver(Version00Coding::encode(game_over.inner()))
   }
 
   #[wasm_bindgen]
@@ -37,7 +37,7 @@ impl Encoded
   {
     Ok(web_api::GameOver::from(
       Version00Coding::decode(
-        serde_urlencoded::from_str::<SealedEncoded>(
+        serde_urlencoded::from_str::<SealedEncodedGameOver>(
           Url::parse(&url)
             .map_err(|e| format!("{}", e))?
             .query()

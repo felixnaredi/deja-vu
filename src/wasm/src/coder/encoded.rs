@@ -22,9 +22,9 @@ use crate::{
 
 /// Access to the encoded `data`.
 #[derive(Debug)]
-pub struct Encoded(SealedEncoded);
+pub struct EncodedGameOver(SealedEncodedGameOver);
 
-impl Encoded
+impl EncodedGameOver
 {
   /// Base64 encoded data.
   pub fn data(&self) -> &str
@@ -40,18 +40,18 @@ impl Encoded
 /// The container of data and meta data for an `Encoded`. To access the underlying data it can be
 /// cast into an `Encoded` with `SealedEncoded::try_into()`.
 #[derive(Builder, Debug, Serialize, Deserialize)]
-pub struct SealedEncoded
+pub struct SealedEncodedGameOver
 {
   version: String,
   checksum: u64,
   data: String,
 }
 
-impl TryFrom<SealedEncoded> for Encoded
+impl TryFrom<SealedEncodedGameOver> for EncodedGameOver
 {
   type Error = SealedEncodedError;
 
-  fn try_from(s: SealedEncoded) -> Result<Encoded, SealedEncodedError>
+  fn try_from(s: SealedEncodedGameOver) -> Result<EncodedGameOver, SealedEncodedError>
   {
     use SealedEncodedError::*;
 
@@ -60,7 +60,7 @@ impl TryFrom<SealedEncoded> for Encoded
     } else if s.checksum != KNOMUL::hash(Version00Coding::hash_seed(), s.data.as_bytes()) {
       Err(InvalidChecksum)
     } else {
-      Ok(Encoded(s))
+      Ok(EncodedGameOver(s))
     }
   }
 }

@@ -1,9 +1,12 @@
 mod encoded;
 mod unseen_id;
-mod version_00;
+mod version;
 
 pub use encoded::{
-  Encoded,
-  SealedEncoded,
+  EncodedGameOver,
+  SealedEncodedGameOver,
 };
-pub use version_00::Version00Coding;
+pub use version::{
+  GameOverCodingV01,
+  Version00Coding,
+};
