@@ -41,7 +41,7 @@ impl GameOverCoder for GameOverCoderV01
     KSINK::hash(SEED, data)
   }
 
-  fn encode<T>(game_over: GameOver<T>) -> Result<String, Self::Error>
+  fn encode<T>(game_over: &GameOver<T>) -> Result<String, Self::Error>
   {
     Ok(base64::encode(&serde_json::to_string(
       &GameOverCoderV01Data {

@@ -30,7 +30,11 @@ pub trait GameOverCoder
 
   fn version() -> &'static str;
   fn checksum(data: &[u8]) -> u64;
-  fn encode<T>(game_over: GameOver<T>) -> Result<String, Self::Error>;
+  fn encode<T>(game_over: &GameOver<T>) -> Result<String, Self::Error>;
+
+  // TODO:
+  //   Instead of having lots of requirements on `T` here, it might be better to let `T` be a trait
+  //   bound type and let the implementing type narrow down what `T` it can decode.
   fn decode<T: PartialEq + Clone + AsRef<[u8]>>(
     data: String,
     unseen: Vec<T>,
@@ -72,10 +76,11 @@ impl SealedEncodedGameOver
 {
   // TODO:
   //   This function is missing tests.
-  pub fn new<E: GameOverCoder, T>(game_over: GameOver<T>)
-    -> Result<SealedEncodedGameOver, E::Error>
+  pub fn new<E: GameOverCoder, T>(
+    game_over: &GameOver<T>,
+  ) -> Result<SealedEncodedGameOver, E::Error>
   {
-    E::encode(game_over).map(|data| SealedEncodedGameOver {
+    E::encode(&game_over).map(|data| SealedEncodedGameOver {
       version: E::version().into(),
       checksum: E::checksum(data.as_bytes()),
       data,

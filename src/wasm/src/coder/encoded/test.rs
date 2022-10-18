@@ -144,7 +144,7 @@ mod game_over_coder_v01
       0.4.try_into().unwrap(),
       [Some(9), Some(15), Some(35)],
     );
-    let encoded = SealedEncodedGameOver::new::<GameOverCoderV01, _>(game_over.clone()).unwrap();
+    let encoded = SealedEncodedGameOver::new::<GameOverCoderV01, _>(&game_over).unwrap();
     let decoded = GameOver::try_from((encoded, unseen)).unwrap();
 
     assert_eq!(decoded.element_checksum(), game_over.element_checksum());
@@ -156,7 +156,7 @@ mod game_over_coder_v01
   #[test]
   fn detect_use_of_wrong_set_when_decoding()
   {
-    let e = SealedEncodedGameOver::new::<GameOverCoderV01, _>(GameOver::new(
+    let e = SealedEncodedGameOver::new::<GameOverCoderV01, _>(&GameOver::new(
       622451429113938556,
       UnseenSetID::Unspecified,
       // The unseen set used when encoding...

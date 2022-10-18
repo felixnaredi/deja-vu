@@ -38,6 +38,7 @@ impl Version00Coding
     "00"
   }
 
+  #[allow(dead_code)]
   fn base64_encode(self) -> String
   {
     base64::encode(serde_json::to_string(&self).unwrap())
@@ -55,6 +56,7 @@ impl Version00Coding
   }
 
   /// Encodes `game_over`.
+  #[allow(dead_code)]
   pub fn encode<T>(game_over: &GameOver<T>) -> SealedEncodedGameOver
   {
     let version = Self {
