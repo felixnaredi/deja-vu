@@ -1,22 +1,37 @@
+#[cfg(test)]
+mod test;
+
 use std::{
   error::Error,
   fmt::Display,
 };
 
+use serde::{
+  Deserialize,
+  Serialize,
+};
+
 use crate::{
+  coder::UnseenSetID,
   game::{
     GameError,
     Unseen,
   },
-  rng::Konadare192PxPlusPlus,
+  rng::{
+    IndexedPermutation,
+    Konadare192PxPlusPlus,
+    KSINK,
+  },
 };
 
 const THRESHOLD_MAX: u32 = 1_000_000_000;
 
+pub const DEFAULT_ELEMENT_CHECKSUM: u64 = 2636128771936786712;
 pub const INITIAL_LIVES_AMOUNT: usize = 3;
 
 pub type IncorrectCommits = [Option<usize>; INITIAL_LIVES_AMOUNT];
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct SeenThreshold(u32);
 
 #[derive(Debug)]
@@ -65,12 +80,22 @@ pub struct Game<T>
   rng: Konadare192PxPlusPlus,
   seen_threshold: u32,
   count: usize,
+
+  // TODO:
+  //   The unit tests does not offer full coverage for the fields below.
+  unseen_set_id: UnseenSetID,
+  element_checksum: u64,
 }
 
 impl<T> Game<T>
 {
   /// Create a new game.
-  pub fn new(seed: u64, seen_threshold: SeenThreshold, unseen: Vec<T>) -> Game<T>
+  pub fn new(
+    seed: u64,
+    seen_threshold: SeenThreshold,
+    unseen_set_id: UnseenSetID,
+    unseen: Vec<T>,
+  ) -> Game<T>
   {
     Game {
       seed,
@@ -82,6 +107,11 @@ impl<T> Game<T>
       rng: Konadare192PxPlusPlus::from_seed(seed),
       seen_threshold: seen_threshold.0,
       count: 0,
+      element_checksum: KSINK::permute_index(
+        unseen_set_id.unique_number(),
+        DEFAULT_ELEMENT_CHECKSUM,
+      ),
+      unseen_set_id,
     }
   }
 
@@ -97,6 +127,8 @@ impl<T> Game<T>
     }
     self.rng = Konadare192PxPlusPlus::from_seed(self.seed);
     self.count = 0;
+    self.element_checksum =
+      KSINK::permute_index(self.unseen_set_id.unique_number(), DEFAULT_ELEMENT_CHECKSUM);
   }
 
   /// Returns how many lives the game has left.
@@ -142,11 +174,28 @@ impl<T> Game<T>
       Ok(())
     }
   }
+
+  /// The checksum of the generated elements.
+  pub fn element_checksum(&self) -> u64
+  {
+    self.element_checksum
+  }
+
+  /// The `UnseenSetID` of the `Game`.
+  pub fn unseen_set_id(&self) -> &UnseenSetID
+  {
+    &self.unseen_set_id
+  }
+
+  pub fn seen_threshold(&self) -> SeenThreshold
+  {
+    SeenThreshold(self.seen_threshold)
+  }
 }
 
 impl<T> Game<T>
 where
-  T: Clone + PartialEq,
+  T: Clone + PartialEq + AsRef<[u8]>,
 {
   /// Generates the next value.
   pub fn next(&mut self) -> Result<&T, GameError>
@@ -172,13 +221,15 @@ where
 
   fn next_unseen(&mut self) -> Result<&T, GameError>
   {
-    self.current = Some(
-      self
-        .unseen
-        .poll(&mut self.rng)
-        .map(|x| x.clone())
-        .ok_or(GameError::UnseenEmpty)?,
-    );
+    let x = self
+      .unseen
+      .poll(&mut self.rng)
+      .map(|x| x.clone())
+      .ok_or(GameError::UnseenEmpty)?;
+
+    self.element_checksum = KSINK::hash(self.element_checksum, x.as_ref());
+    self.current = Some(x);
+
     Ok(self.current.as_ref().unwrap())
   }
 
@@ -193,6 +244,10 @@ where
         break;
       }
     }
+    self.element_checksum = KSINK::hash(
+      self.element_checksum,
+      self.current.as_ref().unwrap().as_ref(),
+    );
     Ok(self.current.as_ref().unwrap())
   }
 

@@ -1,7 +1,10 @@
-use crate::game::{
-  Game,
-  IncorrectCommits,
-  SeenThreshold,
+use crate::{
+  coder::UnseenSetID,
+  game::{
+    Game,
+    IncorrectCommits,
+    SeenThreshold,
+  },
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -73,16 +76,17 @@ impl<T> From<Game<T>> for GameOver<T>
 
 impl<T> GameOver<T>
 where
-  T: Clone + PartialEq,
+  T: Clone + PartialEq + AsRef<[u8]>,
 {
   pub fn new(
     seed: u64,
+    unseen_set_id: UnseenSetID,
     unseen: Vec<T>,
     seen_threshold: SeenThreshold,
     incorrect_commits: IncorrectCommits,
   ) -> GameOver<T>
   {
-    let game = Game::new(seed, seen_threshold, unseen);
+    let game = Game::new(seed, seen_threshold, unseen_set_id, unseen);
     let mut iterator = GameOver(game).into_iter();
     iterator.incorrect_commits = incorrect_commits;
     iterator.all(|_| true);
@@ -117,6 +121,22 @@ impl<T> GameOver<T>
   {
     self.0.lives()
   }
+
+  /// The checksum of the generated elements.
+  pub fn element_checksum(&self) -> u64
+  {
+    self.0.element_checksum()
+  }
+
+  pub fn unseen_set_id(&self) -> &UnseenSetID
+  {
+    self.0.unseen_set_id()
+  }
+
+  pub fn seen_threshold(&self) -> SeenThreshold
+  {
+    self.0.seen_threshold()
+  }
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -135,7 +155,7 @@ pub struct GameOverIterator<T>
 
 impl<T> Iterator for GameOverIterator<T>
 where
-  T: Clone + PartialEq,
+  T: Clone + PartialEq + AsRef<[u8]>,
 {
   type Item = Commit<T>;
 

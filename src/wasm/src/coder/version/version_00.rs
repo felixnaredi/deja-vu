@@ -8,11 +8,11 @@ use serde::{
 use crate::{
   coder::{
     encoded::{
-      Encoded,
-      SealedEncoded,
-      SealedEncodedBuilder,
+      EncodedGameOver,
+      SealedEncodedGameOver,
+      SealedEncodedGameOverBuilder,
     },
-    unseen_id::UnseenID,
+    unseen_set_id::UnseenSetID,
   },
   game_over::GameOver,
   rng::{
@@ -25,7 +25,7 @@ use crate::{
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Version00Coding
 {
-  unseen_id: UnseenID,
+  unseen_id: UnseenSetID,
   seed: u64,
   incorrect_commits: Vec<usize>,
 }
@@ -38,6 +38,7 @@ impl Version00Coding
     "00"
   }
 
+  #[allow(dead_code)]
   fn base64_encode(self) -> String
   {
     base64::encode(serde_json::to_string(&self).unwrap())
@@ -55,10 +56,11 @@ impl Version00Coding
   }
 
   /// Encodes `game_over`.
-  pub fn encode<T>(game_over: &GameOver<T>) -> SealedEncoded
+  #[allow(dead_code)]
+  pub fn encode<T>(game_over: &GameOver<T>) -> SealedEncodedGameOver
   {
     let version = Self {
-      unseen_id: UnseenID::DictionaryFr01,
+      unseen_id: UnseenSetID::DictionaryFr01,
       seed: game_over.seed(),
       incorrect_commits: vec![
         game_over.incorrect_commits()[0].unwrap(),
@@ -69,7 +71,7 @@ impl Version00Coding
 
     let data = version.base64_encode();
 
-    SealedEncodedBuilder::default()
+    SealedEncodedGameOverBuilder::default()
       .version(Self::id().into())
       .checksum(KNOMUL::hash(Self::hash_seed(), data.as_bytes()))
       .data(data)
@@ -79,13 +81,14 @@ impl Version00Coding
 
   /// Decodes `encoded`, restoring the encoded `GameOver<T>`. Fails if the serialized `data` is
   /// currupt.
-  pub fn decode<T>(encoded: Encoded, unseen: Vec<T>) -> Result<GameOver<T>, Box<dyn Error>>
+  pub fn decode<T>(encoded: EncodedGameOver, unseen: Vec<T>) -> Result<GameOver<T>, Box<dyn Error>>
   where
-    T: Clone + PartialEq,
+    T: Clone + PartialEq + AsRef<[u8]>,
   {
     let decoded = Self::base64_decode(encoded.data())?;
     Ok(GameOver::new(
       decoded.seed,
+      UnseenSetID::DictionaryFr01,
       unseen,
       0.4.try_into()?,
       [
@@ -112,7 +115,7 @@ mod test
   fn data_can_be_base64_encoded_and_decoded()
   {
     let x = || Version00Coding {
-      unseen_id: UnseenID::DictionaryFr01,
+      unseen_id: UnseenSetID::DictionaryFr01,
       seed: 3732249406730752636,
       incorrect_commits: vec![36, 40, 57],
     };
@@ -123,10 +126,11 @@ mod test
   #[test]
   fn encode_decode_is_equal_to_id_for_game_over()
   {
-    let unseen: Vec<u32> = (0..64).collect();
+    let unseen: Vec<[u8; 1]> = (0..64).map(|x| [x]).collect();
 
     let game_over = GameOver::new(
       7789954068733337566,
+      UnseenSetID::DictionaryFr01,
       unseen.clone(),
       0.4.try_into().unwrap(),
       [Some(36), Some(40), Some(57)],

@@ -39,7 +39,7 @@ import GradientButton from "@/components/GradientButton.vue";
 import GameOverTable from "@/components/GameOverTable.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import { useGameOverStore } from "@/store/history";
-import { Encoded } from "../../../dist/wasm";
+import { EncodedGameOver } from "../../../dist/wasm";
 import path from "@/service/path";
 import ErrorSign from "@/components/ErrorSign.vue";
 
@@ -68,11 +68,12 @@ export default {
       (words) => {
         words.json().then((words) => {
           try {
-            const history = Encoded.decode(window.location.href, words);
+            const history = EncodedGameOver.decode(window.location.href, words);
             useGameOverStore().setGameOver(history);
           } catch (error) {
             /* eslint-disable-next-line no-console */
-            console.error(`Error: Encoded.decode -  ${error}`);
+            console.error(`Error: EncodedGameOver
+          .decode -  ${error}`);
             this.errorMessage = error;
           }
         });

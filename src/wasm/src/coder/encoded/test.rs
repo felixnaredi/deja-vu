@@ -2,17 +2,21 @@ use std::iter;
 
 use super::*;
 use crate::{
-  coder::Version00Coding,
+  coder::{
+    UnseenSetID,
+    Version00Coding,
+  },
   game_over::GameOver,
 };
 
 #[test]
 fn encode_decode_same_as_id()
 {
-  let unseen: Vec<i32> = (0..64).collect();
+  let unseen: Vec<[u8; 1]> = (0..64).map(|x| [x]).collect();
 
   let game_over = GameOver::new(
     2313308731114687875,
+    UnseenSetID::Unspecified,
     unseen.clone(),
     0.4.try_into().unwrap(),
     [Some(1), Some(24), Some(30)],
@@ -31,10 +35,11 @@ fn encode_decode_same_as_id()
 #[test]
 fn modifying_checksum_throws_invalid_checksum_error()
 {
-  let unseen: Vec<i32> = (0..64).collect();
+  let unseen: Vec<[u8; 1]> = (0..64).map(|x| [x]).collect();
 
   let game_over = GameOver::new(
     2313308731114687875,
+    UnseenSetID::Unspecified,
     unseen.clone(),
     0.4.try_into().unwrap(),
     [Some(16), Some(30), Some(34)],
@@ -45,7 +50,7 @@ fn modifying_checksum_throws_invalid_checksum_error()
   encoded.checksum ^= KNOMUL::permute_index(encoded.checksum, 12228011056065030022);
 
   assert_eq!(
-    Encoded::try_from(encoded).unwrap_err().to_string(),
+    EncodedGameOver::try_from(encoded).unwrap_err().to_string(),
     SealedEncodedError::InvalidChecksum.to_string()
   );
 }
@@ -53,10 +58,11 @@ fn modifying_checksum_throws_invalid_checksum_error()
 #[test]
 fn modifying_data_throws_invalid_checksum_error()
 {
-  let unseen: Vec<i32> = (0..64).collect();
+  let unseen: Vec<[u8; 1]> = (0..64).map(|x| [x]).collect();
 
   let game_over = GameOver::new(
     2313308731114687875,
+    UnseenSetID::Unspecified,
     unseen.clone(),
     0.4.try_into().unwrap(),
     [Some(21), Some(46), Some(47)],
@@ -74,7 +80,7 @@ fn modifying_data_throws_invalid_checksum_error()
   encoded.data = String::from_utf8(b).unwrap();
 
   assert_eq!(
-    Encoded::try_from(encoded).unwrap_err().to_string(),
+    EncodedGameOver::try_from(encoded).unwrap_err().to_string(),
     SealedEncodedError::InvalidChecksum.to_string()
   );
 }
@@ -82,10 +88,11 @@ fn modifying_data_throws_invalid_checksum_error()
 #[test]
 fn invalid_version_throws_unrecognised_version_error()
 {
-  let unseen: Vec<i32> = (0..64).collect();
+  let unseen: Vec<[u8; 1]> = (0..64).map(|x| [x]).collect();
 
   let game_over = GameOver::new(
     2313308731114687875,
+    UnseenSetID::Unspecified,
     unseen.clone(),
     0.4.try_into().unwrap(),
     [Some(22), Some(42), Some(49)],
@@ -108,7 +115,57 @@ fn invalid_version_throws_unrecognised_version_error()
   encoded.data = String::from_utf8(b).unwrap();
 
   assert_eq!(
-    Encoded::try_from(encoded).unwrap_err().to_string(),
+    EncodedGameOver::try_from(encoded).unwrap_err().to_string(),
     SealedEncodedError::UnrecognisedVersion("bad-version".into()).to_string()
   );
+}
+
+mod game_over_coder_v01
+{
+  use std::iter;
+
+  use crate::{
+    coder::{
+      GameOverCoderV01,
+      SealedEncodedGameOver,
+      UnseenSetID,
+    },
+    game_over::GameOver,
+  };
+
+  #[test]
+  fn encode_decode_equals_id()
+  {
+    let unseen: Vec<[u8; 1]> = (0..64).map(|x| [x]).collect();
+    let game_over = GameOver::new(
+      9940370477626720397,
+      UnseenSetID::Unspecified,
+      unseen.clone(),
+      0.4.try_into().unwrap(),
+      [Some(9), Some(15), Some(35)],
+    );
+    let encoded = SealedEncodedGameOver::new::<GameOverCoderV01, _>(&game_over).unwrap();
+    let decoded = GameOver::try_from((encoded, unseen)).unwrap();
+
+    assert_eq!(decoded.element_checksum(), game_over.element_checksum());
+    assert_eq!(decoded.score(), game_over.score());
+    assert_eq!(decoded.lives(), game_over.lives());
+    assert!(iter::zip(decoded.into_iter(), game_over.into_iter()).all(|(x, y)| x == y));
+  }
+
+  #[test]
+  fn detect_use_of_wrong_set_when_decoding()
+  {
+    let e = SealedEncodedGameOver::new::<GameOverCoderV01, _>(&GameOver::new(
+      622451429113938556,
+      UnseenSetID::Unspecified,
+      // The unseen set used when encoding...
+      (0..64).map(|x| [x]).collect(),
+      0.4.try_into().unwrap(),
+      [Some(30), Some(31), Some(54)],
+    ))
+    .unwrap();
+
+    assert!(GameOver::try_from((e, (64..128).map(|x| [x]).collect())).is_err());
+  }
 }

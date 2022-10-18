@@ -7,23 +7,26 @@ use wasm_bindgen::prelude::{
 use crate::{
   coder::{
     self,
-    SealedEncoded,
-    Version00Coding,
+    GameOverCoderV01,
+    SealedEncodedGameOver,
   },
+  game_over,
   web_api,
 };
 
 #[wasm_bindgen]
-pub struct Encoded(coder::SealedEncoded);
+pub struct EncodedGameOver(coder::SealedEncodedGameOver);
 
 #[allow(non_snake_case)]
 #[wasm_bindgen]
-impl Encoded
+impl EncodedGameOver
 {
   #[wasm_bindgen(constructor)]
-  pub fn new(game_over: &web_api::GameOver) -> Encoded
+  pub fn new(game_over: &web_api::GameOver) -> Result<EncodedGameOver, String>
   {
-    Encoded(Version00Coding::encode(game_over.inner()))
+    coder::SealedEncodedGameOver::new::<GameOverCoderV01, _>(game_over.inner())
+      .map(|x| EncodedGameOver(x))
+      .map_err(|e| format!("{}", e))
   }
 
   #[wasm_bindgen]
@@ -35,20 +38,18 @@ impl Encoded
   #[wasm_bindgen]
   pub fn decode(url: String, unseen: Vec<JsValue>) -> Result<web_api::GameOver, String>
   {
-    Ok(web_api::GameOver::from(
-      Version00Coding::decode(
-        serde_urlencoded::from_str::<SealedEncoded>(
-          Url::parse(&url)
-            .map_err(|e| format!("{}", e))?
-            .query()
-            .ok_or(String::from("url is missing search query"))?,
-        )
+    let seal = serde_urlencoded::from_str::<SealedEncodedGameOver>(
+      Url::parse(&url)
         .map_err(|e| format!("{}", e))?
-        .try_into()
-        .map_err(|e| format!("{}", e))?,
-        unseen.into_iter().map(|x| x.as_string().unwrap()).collect(),
-      )
-      .map_err(|e| format!("{}", e))?,
-    ))
+        .query()
+        .ok_or("url has no search query")?,
+    )
+    .map_err(|e| format!("{}", e))?;
+
+    let unseen = unseen.into_iter().map(|x| x.as_string().unwrap()).collect();
+
+    let game_over: game_over::GameOver<String> =
+      (seal, unseen).try_into().map_err(|e| format!("{}", e))?;
+    Ok(web_api::GameOver::from(game_over))
   }
 }

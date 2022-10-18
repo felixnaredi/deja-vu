@@ -17,7 +17,7 @@
 import GradientButton from "@/components/GradientButton.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import { useGameStore } from "@/store/game";
-import { Encoded } from "../../../dist/wasm";
+import { EncodedGameOver } from "../../../dist/wasm";
 import path from "@/service/path";
 
 export default {
@@ -44,11 +44,13 @@ export default {
       useGameStore().updateCurrentWord();
     },
     async goToGameOver() {
-      const encoded = new Encoded((await useGameStore().game).intoGameOver());
+      const encodedGameOver = new EncodedGameOver(
+        (await useGameStore().game).intoGameOver()
+      );
       window.location.href = `${path(
         process.env.BASE_URL,
         "game-over"
-      )}?${encoded.asURLSearchParams()}`;
+      )}?${encodedGameOver.asURLSearchParams()}`;
     },
   },
   computed: {
