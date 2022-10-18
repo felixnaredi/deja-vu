@@ -1,13 +1,11 @@
 import { defineStore } from "pinia";
-import path from "@/service/path";
+import UnseenSetID from "@/service/unseen-set-id";
 import { Game } from "../../dist/wasm";
 
 export const useGameStore = defineStore("game", {
   state: () => ({
-    game: fetch(
-      path(process.env.BASE_URL, "dictionary", "fr01", "words.json")
-    ).then((words) =>
-      words.json().then((words) => new Game(BigInt(Date.now()), 0.4, words))
+    game: UnseenSetID.DictionaryFr01().words.then(
+      (words) => new Game(BigInt(Date.now()), 0.4, words)
     ),
     lives: Game.initialLivesAmount(),
     score: 0,
