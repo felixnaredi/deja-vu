@@ -18,7 +18,7 @@
   </div>
   <div class="z-0">
     <div class="flex justify-center">
-      <unseen-set-dropdown class="m-3" disabled="true" />
+      <unseen-set-dropdown class="m-3" :disabled="true" :select="select" />
     </div>
     <score-board :score="score" :lives="lives" />
     <div class="grid justify-items-center">
@@ -41,11 +41,12 @@ import ResetArrow from "@/assets/ResetArrow.vue";
 import GradientButton from "@/components/GradientButton.vue";
 import GameOverTable from "@/components/GameOverTable.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
-import { useGameOverStore } from "@/store/history";
+import { useGameOverStore } from "@/store/game-over";
 import { EncodedGameOver } from "../../../dist/wasm";
 import path from "@/service/path";
 import ErrorSign from "@/components/ErrorSign.vue";
 import UnseenSetDropdown from "@/components/UnseenSetDropdown.vue";
+import UnseenSetID from "@/service/unseen-set-id";
 
 export default {
   components: {
@@ -58,6 +59,7 @@ export default {
   },
   data: () => ({
     errorMessage: "",
+    select: UnseenSetID.Top999WiktionaryFr.primitive,
   }),
   methods: {
     newGame() {
@@ -69,21 +71,23 @@ export default {
     lives: () => useGameOverStore().lives,
   },
   created() {
-    fetch(path(process.env.BASE_URL, "dictionary", "fr01", "words.json")).then(
-      (words) => {
-        words.json().then((words) => {
-          try {
-            const history = EncodedGameOver.decode(window.location.href, words);
-            useGameOverStore().setGameOver(history);
-          } catch (error) {
-            /* eslint-disable-next-line no-console */
-            console.error(`Error: EncodedGameOver
-          .decode -  ${error}`);
-            this.errorMessage = error;
-          }
-        });
-      }
-    );
+    const encoded = EncodedGameOver.fromURL(window.location.href);
+
+    try {
+      new UnseenSetID(encoded.unseenSetID()).words.then((words) => {
+        try {
+          this.select = encoded.unseenSetID();
+          useGameOverStore().setGameOver(
+            EncodedGameOver.decode(window.location.href, words)
+          );
+        } catch (e) {
+          console.log(e);
+          this.errorMessage = e;
+        }
+      });
+    } catch (e) {
+      this.errorMessage = e;
+    }
   },
 };
 </script>

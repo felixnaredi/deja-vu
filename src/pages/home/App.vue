@@ -3,6 +3,7 @@
     <unseen-set-dropdown
       class="m-3"
       :disabled="hasPlayedGame"
+      :select="select"
       @change="unseenSetChanged"
     />
   </div>
@@ -30,6 +31,9 @@ import UnseenSetDropdown from "@/components/UnseenSetDropdown.vue";
 import UnseenSetID from "@/service/unseen-set-id";
 
 export default {
+  data: () => ({
+    select: UnseenSetID.Top999WiktionaryFr.primitive,
+  }),
   components: { GradientButton, ScoreBoard, UnseenSetDropdown },
   methods: {
     async commitSeen() {
@@ -61,8 +65,9 @@ export default {
         "game-over"
       )}?${encodedGameOver.asURLSearchParams()}`;
     },
-    unseenSetChanged: async (event) => {
+    async unseenSetChanged(event) {
       await useGameStore().setUnseenSet(new UnseenSetID(event.target.value));
+      this.select = event.target.value;
     },
   },
   computed: {

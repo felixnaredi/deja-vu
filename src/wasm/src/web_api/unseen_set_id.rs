@@ -18,7 +18,7 @@ pub enum UnseenSetIDPrimitive
 }
 
 // -------------------------------------------------------------------------------------------------
-// Enable cast to `coder::UnseenSetID`
+// Enable cast from and to `coder::UnseenSetID`
 // -------------------------------------------------------------------------------------------------
 
 impl From<UnseenSetIDPrimitive> for coder::UnseenSetID
@@ -31,6 +31,34 @@ impl From<UnseenSetIDPrimitive> for coder::UnseenSetID
       Unspecified => coder::UnseenSetID::Unspecified,
       DictionaryFr01 => coder::UnseenSetID::DictionaryFr01,
       Top999WiktionaryFr => coder::UnseenSetID::Top999WiktionaryFr,
+    }
+  }
+}
+
+impl From<coder::UnseenSetID> for UnseenSetIDPrimitive
+{
+  fn from(id: coder::UnseenSetID) -> Self
+  {
+    use UnseenSetIDPrimitive::*;
+
+    match id {
+      coder::UnseenSetID::Unspecified => Unspecified,
+      coder::UnseenSetID::DictionaryFr01 => DictionaryFr01,
+      coder::UnseenSetID::Top999WiktionaryFr => Top999WiktionaryFr,
+    }
+  }
+}
+
+impl From<&coder::UnseenSetID> for UnseenSetIDPrimitive
+{
+  fn from(id: &coder::UnseenSetID) -> Self
+  {
+    use UnseenSetIDPrimitive::*;
+
+    match id {
+      coder::UnseenSetID::Unspecified => Unspecified,
+      coder::UnseenSetID::DictionaryFr01 => DictionaryFr01,
+      coder::UnseenSetID::Top999WiktionaryFr => Top999WiktionaryFr,
     }
   }
 }

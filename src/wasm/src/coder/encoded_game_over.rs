@@ -8,6 +8,7 @@ use serde::{
   Serialize,
 };
 
+use super::UnseenSetID;
 use crate::{
   coder::{
     GameOverCoderV01,
@@ -37,6 +38,7 @@ pub trait GameOverCoder
   //   bound type and let the implementing type narrow down what `T` it can decode.
   fn decode<T: PartialEq + Clone + AsRef<[u8]>>(
     data: String,
+    unseen_set_id: UnseenSetID,
     unseen: Vec<T>,
   ) -> Result<GameOver<T>, Self::Error>;
 }
@@ -56,20 +58,34 @@ impl EncodedGameOver
   {
     self.0.data.as_ref()
   }
+
+  /// The `UnseenSetID` of the game.
+  pub fn unseen_set_id(&self) -> &UnseenSetID
+  {
+    &self.0.unseen_set_id
+  }
 }
 
 // -------------------------------------------------------------------------------------------------
 // SealedEncoded
 // -------------------------------------------------------------------------------------------------
 
+fn default_unseen_set_id() -> UnseenSetID
+{
+  UnseenSetID::DictionaryFr01
+}
+
 /// The container of data and meta data for an `Encoded`. To access the underlying data it can be
 /// cast into an `Encoded` with `SealedEncoded::try_into()`.
-#[derive(Builder, Debug, Serialize, Deserialize)]
+#[derive(Builder, Clone, Debug, Serialize, Deserialize)]
 pub struct SealedEncodedGameOver
 {
   version: String,
   checksum: u64,
   data: String,
+
+  #[serde(default = "default_unseen_set_id")]
+  unseen_set_id: UnseenSetID,
 }
 
 impl SealedEncodedGameOver
@@ -84,6 +100,7 @@ impl SealedEncodedGameOver
       version: E::version().into(),
       checksum: E::checksum(data.as_bytes()),
       data,
+      unseen_set_id: game_over.unseen_set_id().clone(),
     })
   }
 }
@@ -96,12 +113,22 @@ impl TryFrom<SealedEncodedGameOver> for EncodedGameOver
   {
     use SealedEncodedError::*;
 
-    if s.version != Version00Coding::id() {
-      Err(UnrecognisedVersion(s.version))
-    } else if s.checksum != KNOMUL::hash(Version00Coding::hash_seed(), s.data.as_bytes()) {
-      Err(InvalidChecksum)
-    } else {
-      Ok(EncodedGameOver(s))
+    match s.version.as_str() {
+      v if v == Version00Coding::id() => {
+        if s.checksum == KNOMUL::hash(Version00Coding::hash_seed(), s.data.as_bytes()) {
+          Ok(EncodedGameOver(s))
+        } else {
+          Err(InvalidChecksum)
+        }
+      }
+      v if v == GameOverCoderV01::version() => {
+        if s.checksum == GameOverCoderV01::checksum(s.data.as_bytes()) {
+          Ok(EncodedGameOver(s))
+        } else {
+          Err(InvalidChecksum)
+        }
+      }
+      _ => Err(UnrecognisedVersion(s.version)),
     }
   }
 }
@@ -124,7 +151,7 @@ where
       }
     } else if s.version == GameOverCoderV01::version() {
       if s.checksum == GameOverCoderV01::checksum(s.data.as_bytes()) {
-        Ok(GameOverCoderV01::decode(s.data, unseen)?)
+        Ok(GameOverCoderV01::decode(s.data, s.unseen_set_id, unseen)?)
       } else {
         Err(Box::new(InvalidChecksum))
       }

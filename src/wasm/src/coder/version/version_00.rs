@@ -7,7 +7,7 @@ use serde::{
 
 use crate::{
   coder::{
-    encoded::{
+    encoded_game_over::{
       EncodedGameOver,
       SealedEncodedGameOver,
       SealedEncodedGameOverBuilder,
@@ -75,6 +75,7 @@ impl Version00Coding
       .version(Self::id().into())
       .checksum(KNOMUL::hash(Self::hash_seed(), data.as_bytes()))
       .data(data)
+      .unseen_set_id(UnseenSetID::DictionaryFr01)
       .build()
       .unwrap()
   }

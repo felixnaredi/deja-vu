@@ -7,7 +7,7 @@ use serde::{
 
 use crate::{
   coder::{
-    encoded::GameOverCoder,
+    encoded_game_over::GameOverCoder,
     unseen_set_id::UnseenSetID,
   },
   game::{
@@ -46,7 +46,6 @@ impl GameOverCoder for GameOverCoderV01
     Ok(base64::encode(&serde_json::to_string(
       &GameOverCoderV01Data {
         seed: game_over.seed(),
-        unseen_set_id: game_over.unseen_set_id().clone(),
         seen_threshold: game_over.seen_threshold(),
         incorrect_commits: game_over.incorrect_commits(),
         element_checksum: game_over.element_checksum(),
@@ -56,6 +55,7 @@ impl GameOverCoder for GameOverCoderV01
 
   fn decode<T: PartialEq + Clone + AsRef<[u8]>>(
     data: String,
+    unseen_set_id: UnseenSetID,
     unseen: Vec<T>,
   ) -> Result<GameOver<T>, Self::Error>
   {
@@ -63,7 +63,7 @@ impl GameOverCoder for GameOverCoderV01
     let data: GameOverCoderV01Data = serde_json::from_slice(&data)?;
     let game_over = GameOver::new(
       data.seed,
-      data.unseen_set_id,
+      unseen_set_id,
       unseen,
       data.seen_threshold,
       data.incorrect_commits,
@@ -84,7 +84,6 @@ impl GameOverCoder for GameOverCoderV01
 struct GameOverCoderV01Data
 {
   seed: u64,
-  unseen_set_id: UnseenSetID,
   seen_threshold: SeenThreshold,
   incorrect_commits: IncorrectCommits,
   element_checksum: u64,

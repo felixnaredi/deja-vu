@@ -3,7 +3,9 @@ import UnseenSetID from "@/service/unseen-set-id";
 import { Game } from "../../dist/wasm";
 
 const loadGame = (unseenSetID: UnseenSetID) =>
-  unseenSetID.words.then((words) => new Game(BigInt(Date.now()), 0.4, words));
+  unseenSetID.words.then(
+    (words) => new Game(BigInt(Date.now()), 0.4, unseenSetID.primitive, words)
+  );
 
 interface State {
   game: null | Game;

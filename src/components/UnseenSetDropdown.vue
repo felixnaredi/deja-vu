@@ -9,6 +9,7 @@
         v-for="unseenSetID in unseenSetIDs"
         :key="unseenSetID.menuItemLabel"
         :value="unseenSetID.primitive"
+        :selected="select == null ? '' : select == unseenSetID.primitive"
       >
         {{ unseenSetID.menuItemLabel }}
       </option>
@@ -27,6 +28,7 @@ export default {
   },
   props: {
     disabled: Boolean,
+    select: null,
   },
   emits: ["change"],
 };
