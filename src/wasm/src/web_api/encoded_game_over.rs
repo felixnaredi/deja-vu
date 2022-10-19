@@ -36,16 +36,30 @@ impl EncodedGameOver
   }
 
   #[wasm_bindgen]
+  pub fn fromURL(url: String) -> Result<EncodedGameOver, String>
+  {
+    Ok(EncodedGameOver(
+      serde_urlencoded::from_str::<SealedEncodedGameOver>(
+        Url::parse(&url)
+          .map_err(|e| format!("{}", e))?
+          .query()
+          .ok_or("url has no search query")?,
+      )
+      .map_err(|e| format!("{}", e))?,
+    ))
+  }
+
+  #[wasm_bindgen]
+  pub fn unseenSetID(&self) -> Result<web_api::UnseenSetIDPrimitive, String>
+  {
+    let encoded = coder::EncodedGameOver::try_from(self.0.clone()).map_err(|e| format!("{}", e))?;
+    Ok(encoded.unseen_set_id().into())
+  }
+
+  #[wasm_bindgen]
   pub fn decode(url: String, unseen: Vec<JsValue>) -> Result<web_api::GameOver, String>
   {
-    let seal = serde_urlencoded::from_str::<SealedEncodedGameOver>(
-      Url::parse(&url)
-        .map_err(|e| format!("{}", e))?
-        .query()
-        .ok_or("url has no search query")?,
-    )
-    .map_err(|e| format!("{}", e))?;
-
+    let seal = EncodedGameOver::fromURL(url)?.0;
     let unseen = unseen.into_iter().map(|x| x.as_string().unwrap()).collect();
 
     let game_over: game_over::GameOver<String> =

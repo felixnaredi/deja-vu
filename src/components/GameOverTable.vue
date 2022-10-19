@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { useGameOverStore } from "@/store/history";
+import { useGameOverStore } from "@/store/game-over";
 import GameOverTableRow from "./GameOverTableRow.vue";
 
 export default {

@@ -4,7 +4,6 @@ use wasm_bindgen::prelude::{
 };
 
 use crate::{
-  coder::UnseenSetID,
   game,
   web_api,
 };
@@ -22,12 +21,17 @@ impl Game
   /// @param seenRatio The ratio of seen elements that will be generated.
   /// @param unseen List of unseen values.
   #[wasm_bindgen(constructor)]
-  pub fn new(seed: u64, seenRatio: f64, unseen: Vec<JsValue>) -> Result<Game, String>
+  pub fn new(
+    seed: u64,
+    seenRatio: f64,
+    unseen_set_id: web_api::UnseenSetIDPrimitive,
+    unseen: Vec<JsValue>,
+  ) -> Result<Game, String>
   {
     Ok(Game(game::Game::new(
       seed,
       seenRatio.try_into().map_err(|e| format!("{}", e))?,
-      UnseenSetID::DictionaryFr01,
+      unseen_set_id.into(),
       unseen.into_iter().map(|x| x.as_string().unwrap()).collect(),
     )))
   }

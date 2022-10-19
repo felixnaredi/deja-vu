@@ -1,4 +1,12 @@
 <template>
+  <div class="flex justify-center">
+    <unseen-set-dropdown
+      class="m-3"
+      :disabled="hasPlayedGame"
+      :select="select"
+      @change="unseenSetChanged"
+    />
+  </div>
   <score-board :score="score" :lives="lives" />
   <div>
     <div class="flex justify-center m-8">
@@ -17,11 +25,16 @@
 import GradientButton from "@/components/GradientButton.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import { useGameStore } from "@/store/game";
-import { EncodedGameOver } from "../../../dist/wasm";
+import { EncodedGameOver, Game } from "../../../dist/wasm";
 import path from "@/service/path";
+import UnseenSetDropdown from "@/components/UnseenSetDropdown.vue";
+import UnseenSetID from "@/service/unseen-set-id";
 
 export default {
-  components: { GradientButton, ScoreBoard },
+  data: () => ({
+    select: UnseenSetID.Top999WiktionaryFr.primitive,
+  }),
+  components: { GradientButton, ScoreBoard, UnseenSetDropdown },
   methods: {
     async commitSeen() {
       await useGameStore().commitSeen();
@@ -45,12 +58,16 @@ export default {
     },
     async goToGameOver() {
       const encodedGameOver = new EncodedGameOver(
-        (await useGameStore().game).intoGameOver()
+        useGameStore().game.intoGameOver()
       );
       window.location.href = `${path(
         process.env.BASE_URL,
         "game-over"
       )}?${encodedGameOver.asURLSearchParams()}`;
+    },
+    async unseenSetChanged(event) {
+      await useGameStore().setUnseenSet(new UnseenSetID(event.target.value));
+      this.select = event.target.value;
     },
   },
   computed: {
@@ -63,9 +80,15 @@ export default {
     score: () => {
       return useGameStore().score;
     },
+    hasPlayedGame: () => {
+      return !(
+        useGameStore().lives == Game.initialLivesAmount() &&
+        useGameStore().score == 0
+      );
+    },
   },
   created() {
-    useGameStore().updateCurrentWord();
+    useGameStore().setUnseenSet(UnseenSetID.Top999WiktionaryFr);
   },
 };
 </script>

@@ -1,8 +1,8 @@
-mod encoded;
+mod encoded_game_over;
 mod unseen_set_id;
 mod version;
 
-pub use encoded::{
+pub use encoded_game_over::{
   EncodedGameOver,
   SealedEncodedGameOver,
 };
