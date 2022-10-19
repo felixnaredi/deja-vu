@@ -1,15 +1,26 @@
 import { UnseenSetIDPrimitive } from "../../dist/wasm";
 import path from "@/service/path";
 
+/**
+ * Accessor for an unseen set.
+ */
 class UnseenSetID {
-  private id: UnseenSetIDPrimitive;
+  private _primitive: UnseenSetIDPrimitive;
 
-  private constructor(id: UnseenSetIDPrimitive) {
-    this.id = id;
+  /**
+   * Initializes a `UnseenSetID` from an `UnseenSetIDPrimitive`.
+   *
+   * @param primitive The `UnseenSetIDPrimitive` to init with.
+   */
+  public constructor(primitive: UnseenSetIDPrimitive) {
+    this._primitive = Number(primitive);
   }
 
+  /**
+   * The label the `UnseenSetID` should be display in a drop down menu.
+   */
   public get menuItemLabel(): string {
-    switch (this.id) {
+    switch (this._primitive) {
       case UnseenSetIDPrimitive.Unspecified:
         return "Unspecified";
       case UnseenSetIDPrimitive.DictionaryFr01:
@@ -20,8 +31,11 @@ class UnseenSetID {
     return "<unknown>";
   }
 
+  /**
+   * Words in the `UnseenSet`.
+   */
   public get words(): Promise<string[]> {
-    switch (this.id) {
+    switch (this._primitive) {
       case UnseenSetIDPrimitive.DictionaryFr01:
         return fetch(
           path(process.env.BASE_URL, "dictionary", "fr01", "words.json")
@@ -43,11 +57,24 @@ class UnseenSetID {
     return (async () => [])();
   }
 
-  public static DictionaryFr01(): UnseenSetID {
+  /**
+   * The inner primitive.
+   */
+  public get primitive(): UnseenSetIDPrimitive {
+    return this._primitive;
+  }
+
+  /**
+   * French...
+   */
+  public static get DictionaryFr01(): UnseenSetID {
     return new UnseenSetID(UnseenSetIDPrimitive.DictionaryFr01);
   }
 
-  public static Top999WiktionaryFr(): UnseenSetID {
+  /**
+   * Top 999 most common french words according to Wiktionary.
+   */
+  public static get Top999WiktionaryFr(): UnseenSetID {
     return new UnseenSetID(UnseenSetIDPrimitive.Top999WiktionaryFr);
   }
 }

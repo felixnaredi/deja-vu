@@ -17,6 +17,9 @@
     </div>
   </div>
   <div class="z-0">
+    <div class="flex justify-center">
+      <unseen-set-dropdown class="m-3" disabled="true" />
+    </div>
     <score-board :score="score" :lives="lives" />
     <div class="grid justify-items-center">
       <div class="p-8 bg-red-500 m-4">
@@ -42,6 +45,7 @@ import { useGameOverStore } from "@/store/history";
 import { EncodedGameOver } from "../../../dist/wasm";
 import path from "@/service/path";
 import ErrorSign from "@/components/ErrorSign.vue";
+import UnseenSetDropdown from "@/components/UnseenSetDropdown.vue";
 
 export default {
   components: {
@@ -50,6 +54,7 @@ export default {
     GameOverTable,
     GradientButton,
     ErrorSign,
+    UnseenSetDropdown,
   },
   data: () => ({
     errorMessage: "",
