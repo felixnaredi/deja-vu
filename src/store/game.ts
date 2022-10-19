@@ -4,7 +4,8 @@ import { Game } from "../../dist/wasm";
 
 const loadGame = (unseenSetID: UnseenSetID) =>
   unseenSetID.words.then(
-    (words) => new Game(BigInt(Date.now()), 0.4, unseenSetID.primitive, words)
+    (words: string[]) =>
+      new Game(BigInt(Date.now()), 0.4, unseenSetID.primitive, words)
   );
 
 interface State {
@@ -47,7 +48,7 @@ export const useGameStore = defineStore("game", {
     },
     async setUnseenSet(unseenSetID: UnseenSetID) {
       this.$reset();
-      loadGame(unseenSetID).then((game) => {
+      loadGame(unseenSetID).then((game: Game) => {
         this._unseenSetID = unseenSetID;
         this.game = game;
         this.updateCurrentWord();
