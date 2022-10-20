@@ -27,7 +27,7 @@
 import TickSymbol from "@/assets/TickSymbol.vue";
 import CrossSymbol from "@/assets/CrossSymbol.vue";
 import EyeSymbol from "@/assets/EyeSymbol.vue";
-import { Commit } from "../../dist/wasm";
+import { Commit } from "deja-vu-wasm";
 
 export default {
   components: { TickSymbol, CrossSymbol, EyeSymbol },

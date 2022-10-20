@@ -1,4 +1,4 @@
-import { GameOver, Commit } from "../../dist/wasm";
+import { GameOver, Commit } from "deja-vu-wasm";
 
 function GameOverIterator(gameOver: GameOver): Iterable<Commit> {
   const iterator = gameOver.iterator();

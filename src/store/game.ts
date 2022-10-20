@@ -1,10 +1,11 @@
 import { defineStore } from "pinia";
 import UnseenSetID from "@/service/unseen-set-id";
-import { Game } from "../../dist/wasm";
+import { Game } from "deja-vu-wasm";
 
 const loadGame = (unseenSetID: UnseenSetID) =>
   unseenSetID.words.then(
-    (words) => new Game(BigInt(Date.now()), 0.4, unseenSetID.primitive, words)
+    (words: string[]) =>
+      new Game(BigInt(Date.now()), 0.4, unseenSetID.primitive, words)
   );
 
 interface State {
@@ -47,7 +48,7 @@ export const useGameStore = defineStore("game", {
     },
     async setUnseenSet(unseenSetID: UnseenSetID) {
       this.$reset();
-      loadGame(unseenSetID).then((game) => {
+      loadGame(unseenSetID).then((game: Game) => {
         this._unseenSetID = unseenSetID;
         this.game = game;
         this.updateCurrentWord();

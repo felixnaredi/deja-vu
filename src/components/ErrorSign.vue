@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     goHome: () => {
-      window.location.href = path(process.env.BASE_URL);
+      window.location.href = path(import.meta.env.BASE_URL);
     },
   },
 };
