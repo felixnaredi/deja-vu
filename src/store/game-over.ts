@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { commits } from "@/service/game-over";
-import { GameOver, Commit } from "../../dist/wasm";
+import { GameOver, Commit } from "deja-vu-wasm";
 
 interface State {
   gameOver: undefined | GameOver;

@@ -15,7 +15,7 @@
 
 <script>
 import { useGameOverStore } from "@/store/game-over";
-import GameOverTableRow from "./GameOverTableRow.vue";
+import GameOverTableRow from "@/components/GameOverTableRow.vue";
 
 export default {
   components: { GameOverTableRow },

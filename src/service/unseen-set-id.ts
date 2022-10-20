@@ -1,4 +1,4 @@
-import { UnseenSetIDPrimitive } from "../../dist/wasm";
+import { UnseenSetIDPrimitive } from "deja-vu-wasm";
 import path from "@/service/path";
 
 /**
@@ -38,14 +38,22 @@ class UnseenSetID {
     switch (this._primitive) {
       case UnseenSetIDPrimitive.DictionaryFr01:
         return fetch(
+<<<<<<< HEAD
           path(process.env.BASE_URL!, "dictionary", "fr01", "words.json")
+=======
+          path(import.meta.env.BASE_URL!, "dictionary", "fr01", "words.json")
+>>>>>>> main
         )
           .then((response) => response.json())
           .then((words) => words);
       case UnseenSetIDPrimitive.Top999WiktionaryFr:
         return fetch(
           path(
+<<<<<<< HEAD
             process.env.BASE_URL!,
+=======
+            import.meta.env.BASE_URL!,
+>>>>>>> main
             "dictionary",
             "top999-wiktionary-fr",
             "words.json"

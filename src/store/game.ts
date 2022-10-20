@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import UnseenSetID from "@/service/unseen-set-id";
-import { Game } from "../../dist/wasm";
+import { Game } from "deja-vu-wasm";
 
 const loadGame = (unseenSetID: UnseenSetID) =>
   unseenSetID.words.then(

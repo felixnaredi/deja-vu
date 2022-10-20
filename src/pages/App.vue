@@ -25,7 +25,7 @@
 import GradientButton from "@/components/GradientButton.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import { useGameStore } from "@/store/game";
-import { EncodedGameOver, Game } from "../../../dist/wasm";
+import { EncodedGameOver, Game } from "deja-vu-wasm";
 import path from "@/service/path";
 import UnseenSetDropdown from "@/components/UnseenSetDropdown.vue";
 import UnseenSetID from "@/service/unseen-set-id";
@@ -61,7 +61,7 @@ export default {
         useGameStore().game.intoGameOver()
       );
       window.location.href = `${path(
-        process.env.BASE_URL,
+        import.meta.env.BASE_URL,
         "game-over"
       )}?${encodedGameOver.asURLSearchParams()}`;
     },
