@@ -28,6 +28,9 @@ export default defineConfig(({ mode, command }) => {
             new URL("/src/pages/game-over/index.html", import.meta.url)
           ),
         },
+        output: {
+          entryFileNames: "[hash][name].[format].js",
+        },
       },
     },
     resolve: {
