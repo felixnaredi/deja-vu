@@ -42,7 +42,7 @@ import GradientButton from "@/components/GradientButton.vue";
 import GameOverTable from "@/components/GameOverTable.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import { useGameOverStore } from "@/store/game-over";
-import { EncodedGameOver } from "../../../dist/wasm";
+import { EncodedGameOver } from "deja-vu-wasm";
 import path from "@/service/path";
 import ErrorSign from "@/components/ErrorSign.vue";
 import UnseenSetDropdown from "@/components/UnseenSetDropdown.vue";
@@ -63,7 +63,7 @@ export default {
   }),
   methods: {
     newGame() {
-      window.location.href = path(process.env.BASE_URL);
+      window.location.href = path(import.meta.env.BASE_URL);
     },
   },
   computed: {

@@ -1,6 +1,6 @@
 # déjà vu
 
-Test your verbal memory. Play *déjà vu* [here](https://felixnaredi.github.io/deja-vu/).
+Test your verbal memory. Play _déjà vu_ [here](https://felixnaredi.github.io/deja-vu/).
 
 ## Contribute
 
