@@ -48,15 +48,13 @@ impl<T> Unseen<T>
     } else {
       let i = rng.next_with_upper_bound(self.size as u32) as usize;
       let mut j = i;
-      loop {
-        if let Some(&k) = self.indices.get(&j) {
-          j = k;
-        } else {
-          self.size -= 1;
-          self.indices.insert(i, self.size);
-          return self.data.get(j);
-        }
+
+      while let Some(&k) = self.indices.get(&j) {
+        j = k;
       }
+      self.size -= 1;
+      self.indices.insert(i, self.size);
+      self.data.get(j)
     }
   }
 

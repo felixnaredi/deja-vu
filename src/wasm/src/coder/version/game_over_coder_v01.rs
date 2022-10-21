@@ -106,7 +106,7 @@ impl Display for GameOverCoderV01Error
   {
     use GameOverCoderV01Error::*;
     match self {
-      BadElementChecksum => writeln!(f, "bad element checksum"),
+      BadElementChecksum => writeln!(f, "element checksum does not match the accumelated"),
     }
   }
 }
