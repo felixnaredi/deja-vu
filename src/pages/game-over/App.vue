@@ -81,7 +81,7 @@ export default {
             EncodedGameOver.decode(window.location.href, words)
           );
         } catch (e) {
-          console.log(e);
+          console.error(e);
           this.errorMessage = e;
         }
       });
