@@ -1,5 +1,4 @@
 import { UnseenSetIDPrimitive } from "deja-vu-wasm";
-import path from "@/service/path";
 
 /**
  * Accessor for an unseen set.
@@ -37,18 +36,14 @@ class UnseenSetID {
   public get words(): Promise<string[]> {
     switch (this._primitive) {
       case UnseenSetIDPrimitive.DictionaryFr01:
-        return fetch(
-          path(import.meta.env.BASE_URL!, "dictionary", "fr01", "words.json")
-        )
+        return fetch(new URL("/dictionary/fr01/words.json", import.meta.url))
           .then((response) => response.json())
           .then((words) => words);
       case UnseenSetIDPrimitive.Top999WiktionaryFr:
         return fetch(
-          path(
-            import.meta.env.BASE_URL!,
-            "dictionary",
-            "top999-wiktionary-fr",
-            "words.json"
+          new URL(
+            "/dictionary/top999-wiktionary-fr/words.json",
+            import.meta.url
           )
         )
           .then((response) => response.json())
