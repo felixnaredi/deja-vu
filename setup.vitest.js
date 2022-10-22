@@ -10,7 +10,6 @@ const dictionary = {
 
 fetch = createFetchMock(vi);
 fetch.mockResponse((request) => {
-  console.log(request.url);
   if (/\/dictionary\/fr01\/words.json$/.test(request.url)) {
     return new Response(JSON.stringify(dictionary.fr01));
   }

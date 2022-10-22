@@ -16,7 +16,7 @@
   >
     <h1 class="text-red-500 font-bold text-lg mb-3">Error</h1>
     <div class="mb-16">
-      <slot>{{ message }}</slot>
+      <slot></slot>
     </div>
     <span
       class="
@@ -37,9 +37,6 @@
 <script>
 import path from "@/service/path";
 export default {
-  props: {
-    message: String,
-  },
   methods: {
     goHome: () => {
       window.location.href = path(import.meta.env.BASE_URL);
