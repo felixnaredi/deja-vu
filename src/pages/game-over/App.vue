@@ -75,9 +75,9 @@ export default {
   },
   created() {
     const href = this.href == null ? window.location.href : this.href;
-    const encoded = EncodedGameOver.fromURL(href);
 
     try {
+      const encoded = EncodedGameOver.fromURL(href);
       new UnseenSetID(encoded.unseenSetID()).words.then((words) => {
         try {
           this.select = encoded.unseenSetID();

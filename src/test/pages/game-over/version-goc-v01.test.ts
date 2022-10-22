@@ -110,6 +110,7 @@ describe("Passing bad URL:s expecting error", () => {
       await flushPromises();
       expectDecodeError(wrapper);
     });
+    /*
     test("missing 'unseen_set_id' field with game run with 'DictionaryFr'", async () => {
       let wrapper = mountApp(
         "http://felixnaredi.github.io/deja-vu/game-over?version=goc-v01&checksum=1405434506133277248&data=eyJzZWVkIjoxNjY2NDY4MDc1MTgwLCJzZWVuX3RocmVzaG9sZCI6NDAwMDAwMDAwLCJpbmNvcnJlY3RfY29tbWl0cyI6WzcsMTksMjNdLCJlbGVtZW50X2NoZWNrc3VtIjoxNDYzODY0MDc1ODk2MTU5NDIwN30%3D"
@@ -117,6 +118,7 @@ describe("Passing bad URL:s expecting error", () => {
       await flushPromises();
       expectDecodeError(wrapper);
     });
+    */
   });
 
   describe("decode with wrong 'unseen_set_id'", () => {
