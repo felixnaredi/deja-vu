@@ -1,6 +1,6 @@
 <!-- eslint-disable -->
 <template>
-  <div v-if="errorMessage.length > 0">
+  <div v-if="errorMessage">
     <div class="fixed top-0 w-screen z-20 grid grid-cols-12 mt-20">
       <div class="col-span-3"></div>
       <div class="col-span-6 w-full">
@@ -58,9 +58,12 @@ export default {
     UnseenSetDropdown,
   },
   data: () => ({
-    errorMessage: "",
+    errorMessage: undefined,
     select: UnseenSetID.Top999WiktionaryFr.primitive,
   }),
+  props: {
+    href: null | String,
+  },
   methods: {
     newGame() {
       window.location.href = path(import.meta.env.BASE_URL);
@@ -71,21 +74,21 @@ export default {
     lives: () => useGameOverStore().lives,
   },
   created() {
-    const encoded = EncodedGameOver.fromURL(window.location.href);
+    const href = this.href == null ? window.location.href : this.href;
 
     try {
+      const encoded = EncodedGameOver.fromURL(href);
       new UnseenSetID(encoded.unseenSetID()).words.then((words) => {
         try {
           this.select = encoded.unseenSetID();
-          useGameOverStore().setGameOver(
-            EncodedGameOver.decode(window.location.href, words)
-          );
+          useGameOverStore().setGameOver(EncodedGameOver.decode(href, words));
         } catch (e) {
           console.error(e);
           this.errorMessage = e;
         }
       });
     } catch (e) {
+      console.error(e);
       this.errorMessage = e;
     }
   },
