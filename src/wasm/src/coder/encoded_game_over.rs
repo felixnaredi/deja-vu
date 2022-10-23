@@ -1,42 +1,52 @@
 #[cfg(test)]
 mod test;
 
-use std::fmt::Display;
+use std::{
+  error::Error,
+  fmt::Display,
+};
 
 use serde::{
   Deserialize,
   Serialize,
 };
 
-use super::UnseenSetID;
+use super::{
+  version::GameOverCoderVersion,
+  UnseenSetID,
+};
 use crate::{
   coder::{
     GameOverCoderV01,
     Version00Coding,
   },
   game_over::GameOver,
-  rng::{
-    IndexedPermutation,
-    KNOMUL,
-  },
 };
 
 // -------------------------------------------------------------------------------------------------
 // Coder
 // -------------------------------------------------------------------------------------------------
 
-pub trait GameOverCoder
+pub trait CoderVersion
+{
+  fn version() -> GameOverCoderVersion;
+}
+
+pub trait CoderChecksum
+{
+  fn checksum(data: &[u8]) -> u64;
+}
+
+pub trait EncodeGameOver<T>
 {
   type Error;
+  fn encode(game_over: &GameOver<T>) -> Result<String, Self::Error>;
+}
 
-  fn version() -> &'static str;
-  fn checksum(data: &[u8]) -> u64;
-  fn encode<T>(game_over: &GameOver<T>) -> Result<String, Self::Error>;
-
-  // TODO:
-  //   Instead of having lots of requirements on `T` here, it might be better to let `T` be a trait
-  //   bound type and let the implementing type narrow down what `T` it can decode.
-  fn decode<T: PartialEq + Clone + AsRef<[u8]>>(
+pub trait DecodeGameOver<T>
+{
+  type Error;
+  fn decode(
     data: String,
     unseen_set_id: UnseenSetID,
     unseen: Vec<T>,
@@ -53,12 +63,6 @@ pub struct EncodedGameOver(SealedEncodedGameOver);
 
 impl EncodedGameOver
 {
-  /// Base64 encoded data.
-  pub fn data(&self) -> &str
-  {
-    self.0.data.as_ref()
-  }
-
   /// The `UnseenSetID` of the game.
   pub fn unseen_set_id(&self) -> &UnseenSetID
   {
@@ -92,9 +96,9 @@ impl SealedEncodedGameOver
 {
   // TODO:
   //   This function is missing tests.
-  pub fn new<E: GameOverCoder, T>(
-    game_over: &GameOver<T>,
-  ) -> Result<SealedEncodedGameOver, E::Error>
+  pub fn new<E, T>(game_over: &GameOver<T>) -> Result<SealedEncodedGameOver, E::Error>
+  where
+    E: CoderVersion + CoderChecksum + EncodeGameOver<T>,
   {
     E::encode(&game_over).map(|data| SealedEncodedGameOver {
       version: E::version().into(),
@@ -105,30 +109,26 @@ impl SealedEncodedGameOver
   }
 }
 
+// -------------------------------------------------------------------------------------------------
+// Encode and decode
+// -------------------------------------------------------------------------------------------------
+
 impl TryFrom<SealedEncodedGameOver> for EncodedGameOver
 {
-  type Error = SealedEncodedError;
+  type Error = Box<dyn Error>;
 
-  fn try_from(s: SealedEncodedGameOver) -> Result<EncodedGameOver, SealedEncodedError>
+  fn try_from(s: SealedEncodedGameOver) -> Result<EncodedGameOver, Self::Error>
   {
-    use SealedEncodedError::*;
+    match GameOverCoderVersion::try_from(&s.version)? {
+      GameOverCoderVersion::Version00Coding => Ok(
+        ok_checksum::<Version00Coding>(s.checksum, s.data.as_bytes())
+          .map(|_| EncodedGameOver(s))?,
+      ),
 
-    match s.version.as_str() {
-      v if v == Version00Coding::id() => {
-        if s.checksum == KNOMUL::hash(Version00Coding::hash_seed(), s.data.as_bytes()) {
-          Ok(EncodedGameOver(s))
-        } else {
-          Err(InvalidChecksum)
-        }
-      }
-      v if v == GameOverCoderV01::version() => {
-        if s.checksum == GameOverCoderV01::checksum(s.data.as_bytes()) {
-          Ok(EncodedGameOver(s))
-        } else {
-          Err(InvalidChecksum)
-        }
-      }
-      _ => Err(UnrecognisedVersion(s.version)),
+      GameOverCoderVersion::GameOverCoderV01 => Ok(
+        ok_checksum::<GameOverCoderV01>(s.checksum, s.data.as_bytes())
+          .map(|_| EncodedGameOver(s))?,
+      ),
     }
   }
 }
@@ -141,24 +141,31 @@ where
 
   fn try_from((s, unseen): (SealedEncodedGameOver, Vec<T>)) -> Result<GameOver<T>, Self::Error>
   {
-    use SealedEncodedError::*;
-
-    if s.version == Version00Coding::id() {
-      if s.checksum == KNOMUL::hash(Version00Coding::hash_seed(), s.data.as_bytes()) {
-        Ok(Version00Coding::decode(EncodedGameOver(s), unseen)?)
-      } else {
-        Err(Box::new(InvalidChecksum))
-      }
-    } else if s.version == GameOverCoderV01::version() {
-      if s.checksum == GameOverCoderV01::checksum(s.data.as_bytes()) {
-        Ok(GameOverCoderV01::decode(s.data, s.unseen_set_id, unseen)?)
-      } else {
-        Err(Box::new(InvalidChecksum))
-      }
-    } else {
-      Err(Box::new(UnrecognisedVersion(s.version)))
+    match GameOverCoderVersion::try_from(&s.version)? {
+      GameOverCoderVersion::Version00Coding => decode::<Version00Coding, _>(s, unseen),
+      GameOverCoderVersion::GameOverCoderV01 => decode::<GameOverCoderV01, _>(s, unseen),
     }
   }
+}
+
+//
+// Helpers
+//
+
+fn ok_checksum<C: CoderChecksum>(checksum: u64, data: &[u8]) -> Result<(), SealedEncodedError>
+{
+  (checksum == C::checksum(data))
+    .then(|| ())
+    .ok_or(SealedEncodedError::InvalidChecksum)
+}
+
+fn decode<C, T>(s: SealedEncodedGameOver, unseen: Vec<T>) -> Result<GameOver<T>, Box<dyn Error>>
+where
+  C: CoderChecksum + DecodeGameOver<T, Error = Box<dyn Error>>,
+  T: Clone + PartialEq + AsRef<[u8]>,
+{
+  ok_checksum::<C>(s.checksum, s.data.as_bytes())?;
+  C::decode(s.data, s.unseen_set_id, unseen)
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -169,7 +176,6 @@ where
 pub enum SealedEncodedError
 {
   InvalidChecksum,
-  UnrecognisedVersion(String),
 }
 
 impl Display for SealedEncodedError
@@ -180,7 +186,6 @@ impl Display for SealedEncodedError
 
     match self {
       InvalidChecksum => writeln!(f, "the data is currupted"),
-      UnrecognisedVersion(s) => writeln!(f, "version '{}' is not recognised", s),
     }
   }
 }

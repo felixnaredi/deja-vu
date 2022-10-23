@@ -8,11 +8,13 @@ use serde::{
 use crate::{
   coder::{
     encoded_game_over::{
-      EncodedGameOver,
-      SealedEncodedGameOver,
-      SealedEncodedGameOverBuilder,
+      CoderChecksum,
+      CoderVersion,
+      DecodeGameOver,
+      EncodeGameOver,
     },
     unseen_set_id::UnseenSetID,
+    version::GameOverCoderVersion,
   },
   game_over::GameOver,
   rng::{
@@ -20,6 +22,8 @@ use crate::{
     KNOMUL,
   },
 };
+
+const SEED: u64 = 4997987866499591411;
 
 /// `Version00Coding` is a simple coding format that can restore played games.
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -30,36 +34,33 @@ pub struct Version00Coding
   incorrect_commits: Vec<usize>,
 }
 
-impl Version00Coding
+// -------------------------------------------------------------------------------------------------
+// Coder Implementation
+// -------------------------------------------------------------------------------------------------
+
+impl CoderVersion for Version00Coding
 {
-  /// Version id.
-  pub fn id() -> &'static str
+  fn version() -> GameOverCoderVersion
   {
-    "00"
+    GameOverCoderVersion::Version00Coding
   }
+}
 
-  #[allow(dead_code)]
-  fn base64_encode(self) -> String
+impl CoderChecksum for Version00Coding
+{
+  fn checksum(data: &[u8]) -> u64
   {
-    base64::encode(serde_json::to_string(&self).unwrap())
+    KNOMUL::hash(SEED, data)
   }
+}
 
-  fn base64_decode(data: &str) -> Result<Self, Box<dyn Error>>
-  {
-    Ok(serde_json::from_slice(base64::decode(data)?.as_slice())?)
-  }
+impl<T> EncodeGameOver<T> for Version00Coding
+{
+  type Error = Box<dyn Error>;
 
-  /// Seed used when hashing `data` for the checksum of the encoding.
-  pub fn hash_seed() -> u64
+  fn encode(game_over: &GameOver<T>) -> Result<String, Self::Error>
   {
-    4997987866499591411
-  }
-
-  /// Encodes `game_over`.
-  #[allow(dead_code)]
-  pub fn encode<T>(game_over: &GameOver<T>) -> SealedEncodedGameOver
-  {
-    let version = Self {
+    Ok(base64::encode(serde_json::to_string(&Self {
       unseen_id: UnseenSetID::DictionaryFr01,
       seed: game_over.seed(),
       incorrect_commits: vec![
@@ -67,26 +68,23 @@ impl Version00Coding
         game_over.incorrect_commits()[1].unwrap(),
         game_over.incorrect_commits()[2].unwrap(),
       ],
-    };
-
-    let data = version.base64_encode();
-
-    SealedEncodedGameOverBuilder::default()
-      .version(Self::id().into())
-      .checksum(KNOMUL::hash(Self::hash_seed(), data.as_bytes()))
-      .data(data)
-      .unseen_set_id(UnseenSetID::DictionaryFr01)
-      .build()
-      .unwrap()
+    })?))
   }
+}
 
-  /// Decodes `encoded`, restoring the encoded `GameOver<T>`. Fails if the serialized `data` is
-  /// currupt.
-  pub fn decode<T>(encoded: EncodedGameOver, unseen: Vec<T>) -> Result<GameOver<T>, Box<dyn Error>>
-  where
-    T: Clone + PartialEq + AsRef<[u8]>,
+impl<T> DecodeGameOver<T> for Version00Coding
+where
+  T: Clone + AsRef<[u8]> + PartialEq,
+{
+  type Error = Box<dyn Error>;
+
+  fn decode(
+    data: String,
+    _unseen_set_id: UnseenSetID,
+    unseen: Vec<T>,
+  ) -> Result<GameOver<T>, Self::Error>
   {
-    let decoded = Self::base64_decode(encoded.data())?;
+    let decoded: Version00Coding = serde_json::from_slice(base64::decode(data)?.as_slice())?;
     Ok(GameOver::new(
       decoded.seed,
       UnseenSetID::DictionaryFr01,
@@ -104,7 +102,7 @@ impl Version00Coding
 // -------------------------------------------------------------------------------------------------
 // Test
 // -------------------------------------------------------------------------------------------------
-
+/*
 #[cfg(test)]
 mod test
 {
@@ -147,3 +145,4 @@ mod test
     assert_eq!(i, 58);
   }
 }
+*/

@@ -1,3 +1,5 @@
+use std::iter;
+
 use crate::{
   coder::UnseenSetID,
   game::{
@@ -221,5 +223,19 @@ where
       incorrect_commits,
       seen: Vec::new(),
     }
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+// Implement PartialEq for GameOver
+// -------------------------------------------------------------------------------------------------
+
+impl<T> PartialEq for GameOver<T>
+where
+  T: PartialEq + Clone + AsRef<[u8]>,
+{
+  fn eq(&self, other: &Self) -> bool
+  {
+    iter::zip(self.iter(), other.iter()).all(|(x, y)| x == y)
   }
 }

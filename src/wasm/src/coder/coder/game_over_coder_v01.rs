@@ -7,8 +7,14 @@ use serde::{
 
 use crate::{
   coder::{
-    encoded_game_over::GameOverCoder,
+    encoded_game_over::{
+      CoderChecksum,
+      CoderVersion,
+      DecodeGameOver,
+      EncodeGameOver,
+    },
     unseen_set_id::UnseenSetID,
+    version::GameOverCoderVersion,
   },
   game::{
     IncorrectCommits,
@@ -21,27 +27,36 @@ use crate::{
   },
 };
 
-const VERSION: &'static str = "goc-v01";
 const SEED: u64 = 9375103332589136009;
 
 /// Coder that is used to encode a `GameOver` into a `EncodedGameOver` and also decode it.
 pub struct GameOverCoderV01;
 
-impl GameOverCoder for GameOverCoderV01
+// -------------------------------------------------------------------------------------------------
+// Coder implementations
+// -------------------------------------------------------------------------------------------------
+
+impl CoderVersion for GameOverCoderV01
 {
-  type Error = Box<dyn std::error::Error>;
-
-  fn version() -> &'static str
+  fn version() -> GameOverCoderVersion
   {
-    VERSION
+    GameOverCoderVersion::GameOverCoderV01
   }
+}
 
+impl CoderChecksum for GameOverCoderV01
+{
   fn checksum(data: &[u8]) -> u64
   {
     KSINK::hash(SEED, data)
   }
+}
 
-  fn encode<T>(game_over: &GameOver<T>) -> Result<String, Self::Error>
+impl<T> EncodeGameOver<T> for GameOverCoderV01
+{
+  type Error = Box<dyn std::error::Error>;
+
+  fn encode(game_over: &GameOver<T>) -> Result<String, Self::Error>
   {
     Ok(base64::encode(&serde_json::to_string(
       &GameOverCoderV01Data {
@@ -52,8 +67,15 @@ impl GameOverCoder for GameOverCoderV01
       },
     )?))
   }
+}
 
-  fn decode<T: PartialEq + Clone + AsRef<[u8]>>(
+impl<T> DecodeGameOver<T> for GameOverCoderV01
+where
+  T: PartialEq + Clone + AsRef<[u8]>,
+{
+  type Error = Box<dyn std::error::Error>;
+
+  fn decode(
     data: String,
     unseen_set_id: UnseenSetID,
     unseen: Vec<T>,

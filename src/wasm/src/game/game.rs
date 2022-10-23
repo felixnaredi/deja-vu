@@ -31,7 +31,7 @@ pub const INITIAL_LIVES_AMOUNT: usize = 3;
 
 pub type IncorrectCommits = [Option<usize>; INITIAL_LIVES_AMOUNT];
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct SeenThreshold(u32);
 
 #[derive(Debug)]
@@ -73,6 +73,8 @@ pub struct Game<T>
 {
   seed: u64,
   unseen: Unseen<T>,
+  // TODO:
+  //   It could be possible to have seen just store indices and not the elements themself.
   seen: Vec<T>,
   current: Option<T>,
   previuos: Option<T>,
