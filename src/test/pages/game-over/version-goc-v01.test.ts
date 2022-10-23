@@ -6,6 +6,7 @@ import App from "@/pages/game-over/App.vue";
 import ErrorSign from "@/components/ErrorSign.vue";
 import { mount, flushPromises, VueWrapper } from "@vue/test-utils";
 import { createTestingPinia } from "@pinia/testing";
+import { S } from "vitest/dist/index-40e0cb97";
 
 function mountApp(href: string): VueWrapper<any> {
   return mount(App, {
@@ -59,6 +60,13 @@ function expectDecodeError(wrapper: VueWrapper<any>) {
 }
 
 describe("Passing bad URL:s expecting error", () => {
+  const error = vi.spyOn(console, "error").mockImplementation(() => {});
+
+  afterEach(() => {
+    expect(error).toBeCalled();
+    error?.mockReset();
+  });
+
   describe("load *page/game-over.vue* from an URL where either data or checksum has been modified to trigger `BadChecksum`", () => {
     test("mount with modified checksum", async () => {
       let wrapper = mountApp(
