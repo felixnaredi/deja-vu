@@ -21,10 +21,6 @@ use crate::{
     Version00Coding,
   },
   game_over::GameOver,
-  rng::{
-    IndexedPermutation,
-    KNOMUL,
-  },
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -67,12 +63,6 @@ pub struct EncodedGameOver(SealedEncodedGameOver);
 
 impl EncodedGameOver
 {
-  /// Base64 encoded data.
-  pub fn data(&self) -> &str
-  {
-    self.0.data.as_ref()
-  }
-
   /// The `UnseenSetID` of the game.
   pub fn unseen_set_id(&self) -> &UnseenSetID
   {
@@ -106,7 +96,7 @@ impl SealedEncodedGameOver
 {
   // TODO:
   //   This function is missing tests.
-  pub fn new<E, T>(game_over: GameOver<T>) -> Result<SealedEncodedGameOver, E::Error>
+  pub fn new<E, T>(game_over: &GameOver<T>) -> Result<SealedEncodedGameOver, E::Error>
   where
     E: CoderVersion + CoderChecksum + EncodeGameOver<T>,
   {
@@ -119,29 +109,26 @@ impl SealedEncodedGameOver
   }
 }
 
+// -------------------------------------------------------------------------------------------------
+// Encode and decode
+// -------------------------------------------------------------------------------------------------
+
 impl TryFrom<SealedEncodedGameOver> for EncodedGameOver
 {
   type Error = Box<dyn Error>;
 
   fn try_from(s: SealedEncodedGameOver) -> Result<EncodedGameOver, Self::Error>
   {
-    use SealedEncodedError::*;
-
     match GameOverCoderVersion::try_from(&s.version)? {
-      GameOverCoderVersion::Version00Coding => {
-        if s.checksum == KNOMUL::hash(Version00Coding::hash_seed(), s.data.as_bytes()) {
-          Ok(EncodedGameOver(s))
-        } else {
-          Err(InvalidChecksum)?
-        }
-      }
-      GameOverCoderVersion::GameOverCoderV01 => {
-        if s.checksum == GameOverCoderV01::checksum(s.data.as_bytes()) {
-          Ok(EncodedGameOver(s))
-        } else {
-          Err(InvalidChecksum)?
-        }
-      }
+      GameOverCoderVersion::Version00Coding => Ok(
+        ok_checksum::<Version00Coding>(s.checksum, s.data.as_bytes())
+          .map(|_| EncodedGameOver(s))?,
+      ),
+
+      GameOverCoderVersion::GameOverCoderV01 => Ok(
+        ok_checksum::<GameOverCoderV01>(s.checksum, s.data.as_bytes())
+          .map(|_| EncodedGameOver(s))?,
+      ),
     }
   }
 }
@@ -154,25 +141,31 @@ where
 
   fn try_from((s, unseen): (SealedEncodedGameOver, Vec<T>)) -> Result<GameOver<T>, Self::Error>
   {
-    use SealedEncodedError::*;
-
     match GameOverCoderVersion::try_from(&s.version)? {
-      GameOverCoderVersion::Version00Coding => {
-        if s.checksum == KNOMUL::hash(Version00Coding::hash_seed(), s.data.as_bytes()) {
-          Ok(Version00Coding::decode(EncodedGameOver(s), unseen)?)
-        } else {
-          Err(Box::new(InvalidChecksum))
-        }
-      }
-      GameOverCoderVersion::GameOverCoderV01 => {
-        if s.checksum == GameOverCoderV01::checksum(s.data.as_bytes()) {
-          Ok(GameOverCoderV01::decode(s.data, s.unseen_set_id, unseen)?)
-        } else {
-          Err(Box::new(InvalidChecksum))
-        }
-      }
+      GameOverCoderVersion::Version00Coding => decode::<Version00Coding, _>(s, unseen),
+      GameOverCoderVersion::GameOverCoderV01 => decode::<GameOverCoderV01, _>(s, unseen),
     }
   }
+}
+
+//
+// Helpers
+//
+
+fn ok_checksum<C: CoderChecksum>(checksum: u64, data: &[u8]) -> Result<(), SealedEncodedError>
+{
+  (checksum == C::checksum(data))
+    .then(|| ())
+    .ok_or(SealedEncodedError::InvalidChecksum)
+}
+
+fn decode<C, T>(s: SealedEncodedGameOver, unseen: Vec<T>) -> Result<GameOver<T>, Box<dyn Error>>
+where
+  C: CoderChecksum + DecodeGameOver<T, Error = Box<dyn Error>>,
+  T: Clone + PartialEq + AsRef<[u8]>,
+{
+  ok_checksum::<C>(s.checksum, s.data.as_bytes())?;
+  C::decode(s.data, s.unseen_set_id, unseen)
 }
 
 // -------------------------------------------------------------------------------------------------
