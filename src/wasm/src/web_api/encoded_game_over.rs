@@ -24,7 +24,7 @@ impl EncodedGameOver
   #[wasm_bindgen(constructor)]
   pub fn new(game_over: &web_api::GameOver) -> Result<EncodedGameOver, String>
   {
-    coder::SealedEncodedGameOver::new::<GameOverCoderV01, _>(game_over.inner())
+    coder::SealedEncodedGameOver::new::<GameOverCoderV01, _>(game_over.inner().clone())
       .map(|x| EncodedGameOver(x))
       .map_err(|e| format!("{}", e))
   }
