@@ -11,14 +11,8 @@ use crate::{
   coder::UnseenSetID,
   game::SeenThreshold,
   game_over::GameOver,
-  rng::{
-    IndexedPermutation,
-    Konadare192PxPlusPlus,
-    KSINK,
-  },
+  rng::Konadare192PxPlusPlus,
 };
-
-const S: u64 = 5943847430032560006;
 
 fn generate_game_over(
   s: u64,
@@ -62,14 +56,5 @@ fn generate_game_over(
       incorrect,
     ),
     unseen,
-  )
-}
-
-#[test]
-fn f()
-{
-  println!(
-    "{}",
-    KSINK::hash(S, "2202 TSEC 61:23:81 32 tcO nuS".as_bytes())
   )
 }

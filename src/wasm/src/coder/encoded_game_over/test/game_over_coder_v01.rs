@@ -64,16 +64,7 @@ fn decode_literal_with_corrupt_data()
 #[test]
 fn decode_url_with_missing_fields()
 {
-  let (game_over, unseen) = generate_game_over(10012246512391581010, None, None);
-
-  println!(
-    "{}",
-    serde_urlencoded::to_string(
-      SealedEncodedGameOver::new::<GameOverCoderV01, _>(&game_over).unwrap()
-    )
-    .unwrap()
-  );
-
+  let (_, unseen) = generate_game_over(10012246512391581010, None, None);
   let version = "version=goc-v01";
   let checksum = "checksum=13561387729840425778";
   let data = "data=eyJzZWVkIjoxNTc2NDEzMzM4NzA1NzY2MzQwLCJzZWVuX3RocmVzaG9sZCI6NTYzODM1ODk4LCJpbmNvcnJlY3RfY29tbWl0cyI6WzIyLDIzLDg2XSwiZWxlbWVudF9jaGVja3N1bSI6MTgyNzI1NzMwNzg1Njk3Nzk3MTJ9";
