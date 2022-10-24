@@ -1,5 +1,5 @@
 import { generateCommit, Seen, Unseen } from "@/test/commit-mock";
-import { mount, shallowMount } from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import GameOverTableRow from "@/components/GameOverTableRow.vue";
 import EyeSymbol from "@/assets/EyeSymbol.vue";
 import TickSymbol from "@/assets/TickSymbol.vue";
@@ -57,4 +57,32 @@ describe("unit tests", () => {
       check(new Seen(), new Unseen());
     });
   });
+});
+
+describe("snapshots", () => {
+  for (let i = 0; i < 4; i++) {
+    const actual =
+      (i & 1) == 0
+        ? {
+            description: "unseen",
+            value: new Unseen(),
+          }
+        : { description: "seen", value: new Seen() };
+    const guess =
+      (i & 2) == 0
+        ? {
+            description: "unseen",
+            value: new Unseen(),
+          }
+        : { description: "seen", value: new Seen() };
+    test(`guessing '${guess.description}' when the actual is '${actual.description}'`, () => {
+      const commit = generateCommit({
+        actual: actual.value,
+        guess: guess.value,
+        seed,
+      });
+      const wrapper = shallowMount(GameOverTableRow, { props: { commit } });
+      expect(wrapper.html()).toMatchSnapshot();
+    });
+  }
 });

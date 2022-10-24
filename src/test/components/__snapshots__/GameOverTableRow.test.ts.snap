@@ -1,0 +1,57 @@
+// Vitest Snapshot v1
+
+exports[`snapshots > guessing 'seen' when the actual is 'seen' 1`] = `
+"<div class=\\"grid grid-cols-8 gap-4 border-b-2\\">
+  <div class=\\"h-full justify-self-center\\">
+    <eye-symbol-stub class=\\"h-full w-5\\"></eye-symbol-stub>
+  </div>
+  <div class=\\"col-span-5 ml-4\\">7yEb1GA6Xaj8J7e5D</div>
+  <div class=\\"justify-self-center\\">
+    <div class=\\"h-full\\">
+      <tick-symbol-stub class=\\"w-5 h-full\\"></tick-symbol-stub>
+    </div>
+  </div>
+  <div></div>
+</div>"
+`;
+
+exports[`snapshots > guessing 'seen' when the actual is 'unseen' 1`] = `
+"<div class=\\"grid grid-cols-8 gap-4 border-b-2 bg-red-50\\">
+  <div></div>
+  <div class=\\"col-span-5 ml-4\\">sPvi1nq9VRMiQ</div>
+  <div class=\\"justify-self-center\\">
+    <div class=\\"h-full\\">
+      <cross-symbol-stub class=\\"w-5 h-full\\"></cross-symbol-stub>
+    </div>
+  </div>
+  <div></div>
+</div>"
+`;
+
+exports[`snapshots > guessing 'unseen' when the actual is 'seen' 1`] = `
+"<div class=\\"grid grid-cols-8 gap-4 border-b-2 bg-red-50\\">
+  <div class=\\"h-full justify-self-center\\">
+    <eye-symbol-stub class=\\"h-full w-5\\"></eye-symbol-stub>
+  </div>
+  <div class=\\"col-span-5 ml-4\\">Txlxug3V8T9ClBZd</div>
+  <div class=\\"justify-self-center\\">
+    <div></div>
+  </div>
+  <div class=\\"h-full justify-self-center\\">
+    <cross-symbol-stub class=\\"w-5 h-full\\"></cross-symbol-stub>
+  </div>
+</div>"
+`;
+
+exports[`snapshots > guessing 'unseen' when the actual is 'unseen' 1`] = `
+"<div class=\\"grid grid-cols-8 gap-4 border-b-2\\">
+  <div></div>
+  <div class=\\"col-span-5 ml-4\\">Z54WuMeMC7fXYq5NTVht</div>
+  <div class=\\"justify-self-center\\">
+    <div></div>
+  </div>
+  <div class=\\"h-full justify-self-center\\">
+    <tick-symbol-stub class=\\"w-5 h-full\\"></tick-symbol-stub>
+  </div>
+</div>"
+`;
