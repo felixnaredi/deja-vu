@@ -1,21 +1,6 @@
 import { Konadare192PxPlusPlus } from "deja-vu-wasm";
 import alfanumeric from "@/test/alfanumeric";
-
-/**
- * Pseudo boolean that is either `Seen` or `Unseen`.
- */
-interface SeenUnseen {
-  /**
-   * True if the state is `Seen`.
-   * @returns {boolean}
-   */
-  isSeen(): boolean;
-  /**
-   * True if the state is `Unseen`.
-   * @returns {boolean}
-   */
-  isUnseen(): boolean;
-}
+import SeenUnseen from "@/interfaces/SeenUnseen";
 
 export class Seen {
   public isSeen = () => true;
@@ -41,25 +26,25 @@ class Commit {
    * The value of the element.
    * @returns {string}
    */
-  element: () => string;
+  public element: () => string;
 
   /**
    * The actual state of the commit.
    * @returns {SeenUnseen}
    */
-  actual: () => SeenUnseen;
+  public actual: () => SeenUnseen;
 
   /**
    * The guessed state of the commit.
    * @returns {SeenUnseen}
    */
-  guess: () => SeenUnseen;
+  public guess: () => SeenUnseen;
 
   /**
    * True if the `guess` is equal to `actual`.
    * @returns {boolean}
    */
-  correct(): boolean {
+  public correct(): boolean {
     return this.actual().isSeen() == this.guess().isSeen();
   }
 }
@@ -68,7 +53,7 @@ interface CommitOptions {
   readonly element?: string;
   readonly actual?: SeenUnseen;
   readonly guess?: SeenUnseen;
-  readonly seed?: bigint;
+  readonly seed?: number;
 }
 
 export function generateCommit(options: CommitOptions): Commit {
@@ -81,11 +66,9 @@ export function generateCommit(options: CommitOptions): Commit {
   } else if (options.seed == undefined) {
     throw "`seed` not set but all fields are not defined";
   } else {
-    const rng = new Konadare192PxPlusPlus(options.seed);
+    const rng = new Konadare192PxPlusPlus(BigInt(options.seed));
 
-    let element = options.element;
-    let actual = options.actual;
-    let guess = options.guess;
+    let { element, actual, guess } = options;
 
     if (element == undefined) {
       const n = 8 + rng.nextWithUpperBound(16);
