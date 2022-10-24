@@ -6,7 +6,6 @@ import App from "@/pages/game-over/App.vue";
 import ErrorSign from "@/components/ErrorSign.vue";
 import { mount, flushPromises, VueWrapper } from "@vue/test-utils";
 import { createTestingPinia } from "@pinia/testing";
-import { S } from "vitest/dist/index-40e0cb97";
 
 function mountApp(href: string): VueWrapper<any> {
   return mount(App, {
