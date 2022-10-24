@@ -9,7 +9,7 @@
         v-for="unseenSetID in unseenSetIDs"
         :key="unseenSetID.menuItemLabel"
         :value="unseenSetID.primitive"
-        :selected="select == null ? '' : select == unseenSetID.primitive"
+        :selected="selected == unseenSetID.primitive"
       >
         {{ unseenSetID.menuItemLabel }}
       </option>
@@ -17,7 +17,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UnseenSetID from "@/service/unseen-set-id";
 
 export default {
@@ -28,7 +28,7 @@ export default {
   },
   props: {
     disabled: Boolean,
-    select: null,
+    selected: Number,
   },
   emits: ["change"],
 };

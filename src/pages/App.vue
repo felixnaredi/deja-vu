@@ -3,7 +3,7 @@
     <unseen-set-dropdown
       class="m-3"
       :disabled="hasPlayedGame"
-      :select="select"
+      :selected="selected"
       @change="unseenSetChanged"
     />
   </div>
@@ -32,7 +32,7 @@ import UnseenSetID from "@/service/unseen-set-id";
 
 export default {
   data: () => ({
-    select: UnseenSetID.Top999WiktionaryFr.primitive,
+    selected: UnseenSetID.Top999WiktionaryFr.primitive,
   }),
   components: { GradientButton, ScoreBoard, UnseenSetDropdown },
   methods: {
@@ -67,7 +67,7 @@ export default {
     },
     async unseenSetChanged(event) {
       await useGameStore().setUnseenSet(new UnseenSetID(event.target.value));
-      this.select = event.target.value;
+      this.selected = Number(event.target.value);
     },
   },
   computed: {
