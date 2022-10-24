@@ -12,4 +12,5 @@ pub use web_api::{
   EncodedGameOver,
   Game,
   GameOver,
+  Konadare192PxPlusPlus,
 };
