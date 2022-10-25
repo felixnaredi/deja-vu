@@ -13,4 +13,5 @@ pub use web_api::{
   Game,
   GameOver,
   Konadare192PxPlusPlus,
+  KSINK,
 };

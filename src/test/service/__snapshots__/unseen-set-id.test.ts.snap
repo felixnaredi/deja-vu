@@ -1,0 +1,5 @@
+// Vitest Snapshot v1
+
+exports[`unit tests > correct word list is fetched 1`] = `15667069458291467772n`;
+
+exports[`unit tests > correct word list is fetched 2`] = `9470638373931740980n`;
