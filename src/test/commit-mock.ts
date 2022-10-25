@@ -1,5 +1,5 @@
 import { Konadare192PxPlusPlus } from "deja-vu-wasm";
-import alfanumeric from "@/test/alfanumeric";
+import alphanumeric from "@/test/alphanumeric";
 import SeenUnseen from "@/interfaces/SeenUnseen";
 
 export class Seen {
@@ -75,7 +75,7 @@ export function generateCommit(options: CommitOptions): Commit {
       element = "";
       for (let i = 0; i < n; i++) {
         element = `${element}${
-          alfanumeric[rng.nextWithUpperBound(alfanumeric.length)]
+          alphanumeric[rng.nextWithUpperBound(alphanumeric.length)]
         }`;
       }
     }
