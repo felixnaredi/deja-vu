@@ -35,6 +35,8 @@ class UnseenSetID {
    */
   public get words(): Promise<string[]> {
     switch (this._primitive) {
+      case UnseenSetIDPrimitive.Unspecified:
+        throw "`UnseedID.Unspecified` is not allowed to be used outside of testing";
       case UnseenSetIDPrimitive.DictionaryFr01:
         return fetch(new URL("/dictionary/fr01/words.json", import.meta.url))
           .then((response) => response.json())
@@ -49,7 +51,7 @@ class UnseenSetID {
           .then((response) => response.json())
           .then((words) => Object.values(words));
     }
-    return (async () => [])();
+    throw `${this} is not a valid \`UnseenSetID\``;
   }
 
   /**

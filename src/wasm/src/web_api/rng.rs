@@ -1,6 +1,43 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::rng;
+use crate::rng::{
+  self,
+  IndexedPermutation,
+};
+
+// -------------------------------------------------------------------------------------------------
+// KSINK
+// -------------------------------------------------------------------------------------------------
+
+#[wasm_bindgen]
+pub struct KSINK(rng::KSINK);
+
+#[wasm_bindgen]
+#[allow(non_snake_case)]
+impl KSINK
+{
+  #[wasm_bindgen]
+  pub fn permute(x: u64, c: u64) -> u64
+  {
+    rng::KSINK::permute_index(x, c)
+  }
+
+  #[wasm_bindgen]
+  pub fn hash(seed: u64, bytes: &[u8]) -> u64
+  {
+    rng::KSINK::hash(seed, bytes)
+  }
+
+  #[wasm_bindgen]
+  pub fn hashString(seed: u64, s: String) -> u64
+  {
+    rng::KSINK::hash(seed, s.as_bytes())
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+// Konadare192PxPlusPlus
+// -------------------------------------------------------------------------------------------------
 
 #[wasm_bindgen]
 pub struct Konadare192PxPlusPlus(rng::Konadare192PxPlusPlus);

@@ -10,5 +10,8 @@ pub use game_over::{
   Commit,
   GameOver,
 };
-pub use rng::Konadare192PxPlusPlus;
+pub use rng::{
+  Konadare192PxPlusPlus,
+  KSINK,
+};
 pub use unseen_set_id::UnseenSetIDPrimitive;
