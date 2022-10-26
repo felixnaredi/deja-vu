@@ -18,7 +18,7 @@
     <div class="mb-16">
       <slot></slot>
     </div>
-    <span
+    <button
       class="
         border-2
         p-4
@@ -29,8 +29,9 @@
         select-none
       "
       @click="goHome"
-      >D'accueil</span
     >
+      D'accueil
+    </button>
   </div>
 </template>
 
