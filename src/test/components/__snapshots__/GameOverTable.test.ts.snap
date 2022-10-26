@@ -1,0 +1,242 @@
+// Vitest Snapshot v1
+
+exports[`snapshots > snapshot of \`GameOverTable\` with \`commits\` set to \`undefined\` 1`] = `
+"<div>
+  <div class=\\"grid grid-cols-8 gap-4 mb-3\\">
+    <div class=\\"col-span-6\\"></div><span class=\\"justify-self-center underline\\">déjà vu</span><span class=\\"justify-self-center underline\\">nouveau</span>
+  </div>
+</div>"
+`;
+
+exports[`snapshots > snapshot of \`GameOverTable\` with \`commits\` set to empty list 1`] = `
+"<div>
+  <div class=\\"grid grid-cols-8 gap-4 mb-3\\">
+    <div class=\\"col-span-6\\"></div><span class=\\"justify-self-center underline\\">déjà vu</span><span class=\\"justify-self-center underline\\">nouveau</span>
+  </div>
+</div>"
+`;
+
+exports[`snapshots > snapshot of \`GameOverTable\` with \`commits\` some generated \`Commit\`s 1`] = `
+"<div>
+  <div class=\\"grid grid-cols-8 gap-4 mb-3\\">
+    <div class=\\"col-span-6\\"></div><span class=\\"justify-self-center underline\\">déjà vu</span><span class=\\"justify-self-center underline\\">nouveau</span>
+  </div>
+  <div class=\\"grid grid-cols-8 gap-4 border-b-2\\">
+    <div class=\\"h-full justify-self-center\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 120 100\\" class=\\"h-full w-5\\">
+        <g>
+          <ellipse class=\\"fill-transparent stroke-black stroke-[6px]\\" cx=\\"54\\" cy=\\"50\\" rx=\\"50\\" ry=\\"25\\"></ellipse>
+          <g>
+            <circle class=\\"fill-slate-500 stroke-black stroke-[6px]\\" cx=\\"53\\" cy=\\"43\\" r=\\"18\\"></circle>
+            <circle class=\\"fill-white\\" cx=\\"60\\" cy=\\"38\\" r=\\"8\\"></circle>
+          </g>
+        </g>
+      </svg></div>
+    <div class=\\"col-span-5 ml-4\\">MiulY0rX1QNlqWMcMj2CJ4g</div>
+    <div class=\\"justify-self-center\\">
+      <div class=\\"h-full\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 109.38 109.38\\" class=\\"w-5 h-full\\" data-v-34d8da4e=\\"\\">
+          <g data-v-34d8da4e=\\"\\">
+            <g data-v-34d8da4e=\\"\\">
+              <circle class=\\"cls-1\\" cx=\\"54.69\\" cy=\\"54.69\\" r=\\"54.69\\" data-v-34d8da4e=\\"\\"></circle>
+              <polyline class=\\"cls-2\\" points=\\"22.32 52.84 49.06 76.32 87.06 33.05\\" data-v-34d8da4e=\\"\\"></polyline>
+            </g>
+          </g>
+        </svg></div>
+    </div>
+    <div></div>
+  </div>
+  <div class=\\"grid grid-cols-8 gap-4 border-b-2\\">
+    <div></div>
+    <div class=\\"col-span-5 ml-4\\">NAzo0QcF6C8QxnMRMgU3</div>
+    <div class=\\"justify-self-center\\">
+      <div></div>
+    </div>
+    <div class=\\"h-full justify-self-center\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 109.38 109.38\\" class=\\"w-5 h-full\\" data-v-34d8da4e=\\"\\">
+        <g data-v-34d8da4e=\\"\\">
+          <g data-v-34d8da4e=\\"\\">
+            <circle class=\\"cls-1\\" cx=\\"54.69\\" cy=\\"54.69\\" r=\\"54.69\\" data-v-34d8da4e=\\"\\"></circle>
+            <polyline class=\\"cls-2\\" points=\\"22.32 52.84 49.06 76.32 87.06 33.05\\" data-v-34d8da4e=\\"\\"></polyline>
+          </g>
+        </g>
+      </svg></div>
+  </div>
+  <div class=\\"grid grid-cols-8 gap-4 border-b-2\\">
+    <div></div>
+    <div class=\\"col-span-5 ml-4\\">UQ7c9HRadt6juO9</div>
+    <div class=\\"justify-self-center\\">
+      <div></div>
+    </div>
+    <div class=\\"h-full justify-self-center\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 109.38 109.38\\" class=\\"w-5 h-full\\" data-v-34d8da4e=\\"\\">
+        <g data-v-34d8da4e=\\"\\">
+          <g data-v-34d8da4e=\\"\\">
+            <circle class=\\"cls-1\\" cx=\\"54.69\\" cy=\\"54.69\\" r=\\"54.69\\" data-v-34d8da4e=\\"\\"></circle>
+            <polyline class=\\"cls-2\\" points=\\"22.32 52.84 49.06 76.32 87.06 33.05\\" data-v-34d8da4e=\\"\\"></polyline>
+          </g>
+        </g>
+      </svg></div>
+  </div>
+  <div class=\\"grid grid-cols-8 gap-4 border-b-2\\">
+    <div class=\\"h-full justify-self-center\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 120 100\\" class=\\"h-full w-5\\">
+        <g>
+          <ellipse class=\\"fill-transparent stroke-black stroke-[6px]\\" cx=\\"54\\" cy=\\"50\\" rx=\\"50\\" ry=\\"25\\"></ellipse>
+          <g>
+            <circle class=\\"fill-slate-500 stroke-black stroke-[6px]\\" cx=\\"53\\" cy=\\"43\\" r=\\"18\\"></circle>
+            <circle class=\\"fill-white\\" cx=\\"60\\" cy=\\"38\\" r=\\"8\\"></circle>
+          </g>
+        </g>
+      </svg></div>
+    <div class=\\"col-span-5 ml-4\\">PMLsvfjgEHvT</div>
+    <div class=\\"justify-self-center\\">
+      <div class=\\"h-full\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 109.38 109.38\\" class=\\"w-5 h-full\\" data-v-34d8da4e=\\"\\">
+          <g data-v-34d8da4e=\\"\\">
+            <g data-v-34d8da4e=\\"\\">
+              <circle class=\\"cls-1\\" cx=\\"54.69\\" cy=\\"54.69\\" r=\\"54.69\\" data-v-34d8da4e=\\"\\"></circle>
+              <polyline class=\\"cls-2\\" points=\\"22.32 52.84 49.06 76.32 87.06 33.05\\" data-v-34d8da4e=\\"\\"></polyline>
+            </g>
+          </g>
+        </svg></div>
+    </div>
+    <div></div>
+  </div>
+  <div class=\\"grid grid-cols-8 gap-4 border-b-2 bg-red-50\\">
+    <div class=\\"h-full justify-self-center\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 120 100\\" class=\\"h-full w-5\\">
+        <g>
+          <ellipse class=\\"fill-transparent stroke-black stroke-[6px]\\" cx=\\"54\\" cy=\\"50\\" rx=\\"50\\" ry=\\"25\\"></ellipse>
+          <g>
+            <circle class=\\"fill-slate-500 stroke-black stroke-[6px]\\" cx=\\"53\\" cy=\\"43\\" r=\\"18\\"></circle>
+            <circle class=\\"fill-white\\" cx=\\"60\\" cy=\\"38\\" r=\\"8\\"></circle>
+          </g>
+        </g>
+      </svg></div>
+    <div class=\\"col-span-5 ml-4\\">iiXWRB8vfV6vIbgTMV9W</div>
+    <div class=\\"justify-self-center\\">
+      <div></div>
+    </div>
+    <div class=\\"h-full justify-self-center\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 109.37 109.37\\" class=\\"w-5 h-full\\" data-v-57536c88=\\"\\">
+        <g data-v-57536c88=\\"\\">
+          <g data-v-57536c88=\\"\\">
+            <circle class=\\"cls-1\\" cx=\\"54.69\\" cy=\\"54.69\\" r=\\"54.69\\" data-v-57536c88=\\"\\"></circle>
+            <g data-v-57536c88=\\"\\">
+              <line class=\\"cls-2\\" x1=\\"32.52\\" y1=\\"32.52\\" x2=\\"76.85\\" y2=\\"76.85\\" data-v-57536c88=\\"\\"></line>
+              <line class=\\"cls-2\\" x1=\\"76.85\\" y1=\\"32.52\\" x2=\\"32.52\\" y2=\\"76.85\\" data-v-57536c88=\\"\\"></line>
+            </g>
+          </g>
+        </g>
+      </svg></div>
+  </div>
+  <div class=\\"grid grid-cols-8 gap-4 border-b-2\\">
+    <div></div>
+    <div class=\\"col-span-5 ml-4\\">m1lyshsJGOk4dbmegCBf15n</div>
+    <div class=\\"justify-self-center\\">
+      <div></div>
+    </div>
+    <div class=\\"h-full justify-self-center\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 109.38 109.38\\" class=\\"w-5 h-full\\" data-v-34d8da4e=\\"\\">
+        <g data-v-34d8da4e=\\"\\">
+          <g data-v-34d8da4e=\\"\\">
+            <circle class=\\"cls-1\\" cx=\\"54.69\\" cy=\\"54.69\\" r=\\"54.69\\" data-v-34d8da4e=\\"\\"></circle>
+            <polyline class=\\"cls-2\\" points=\\"22.32 52.84 49.06 76.32 87.06 33.05\\" data-v-34d8da4e=\\"\\"></polyline>
+          </g>
+        </g>
+      </svg></div>
+  </div>
+  <div class=\\"grid grid-cols-8 gap-4 border-b-2 bg-red-50\\">
+    <div></div>
+    <div class=\\"col-span-5 ml-4\\">Nm3mTaGlGhurDIuBKZKmj</div>
+    <div class=\\"justify-self-center\\">
+      <div class=\\"h-full\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 109.37 109.37\\" class=\\"w-5 h-full\\" data-v-57536c88=\\"\\">
+          <g data-v-57536c88=\\"\\">
+            <g data-v-57536c88=\\"\\">
+              <circle class=\\"cls-1\\" cx=\\"54.69\\" cy=\\"54.69\\" r=\\"54.69\\" data-v-57536c88=\\"\\"></circle>
+              <g data-v-57536c88=\\"\\">
+                <line class=\\"cls-2\\" x1=\\"32.52\\" y1=\\"32.52\\" x2=\\"76.85\\" y2=\\"76.85\\" data-v-57536c88=\\"\\"></line>
+                <line class=\\"cls-2\\" x1=\\"76.85\\" y1=\\"32.52\\" x2=\\"32.52\\" y2=\\"76.85\\" data-v-57536c88=\\"\\"></line>
+              </g>
+            </g>
+          </g>
+        </svg></div>
+    </div>
+    <div></div>
+  </div>
+  <div class=\\"grid grid-cols-8 gap-4 border-b-2 bg-red-50\\">
+    <div class=\\"h-full justify-self-center\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 120 100\\" class=\\"h-full w-5\\">
+        <g>
+          <ellipse class=\\"fill-transparent stroke-black stroke-[6px]\\" cx=\\"54\\" cy=\\"50\\" rx=\\"50\\" ry=\\"25\\"></ellipse>
+          <g>
+            <circle class=\\"fill-slate-500 stroke-black stroke-[6px]\\" cx=\\"53\\" cy=\\"43\\" r=\\"18\\"></circle>
+            <circle class=\\"fill-white\\" cx=\\"60\\" cy=\\"38\\" r=\\"8\\"></circle>
+          </g>
+        </g>
+      </svg></div>
+    <div class=\\"col-span-5 ml-4\\">6AjWuRQUpQ3KRDWL</div>
+    <div class=\\"justify-self-center\\">
+      <div></div>
+    </div>
+    <div class=\\"h-full justify-self-center\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 109.37 109.37\\" class=\\"w-5 h-full\\" data-v-57536c88=\\"\\">
+        <g data-v-57536c88=\\"\\">
+          <g data-v-57536c88=\\"\\">
+            <circle class=\\"cls-1\\" cx=\\"54.69\\" cy=\\"54.69\\" r=\\"54.69\\" data-v-57536c88=\\"\\"></circle>
+            <g data-v-57536c88=\\"\\">
+              <line class=\\"cls-2\\" x1=\\"32.52\\" y1=\\"32.52\\" x2=\\"76.85\\" y2=\\"76.85\\" data-v-57536c88=\\"\\"></line>
+              <line class=\\"cls-2\\" x1=\\"76.85\\" y1=\\"32.52\\" x2=\\"32.52\\" y2=\\"76.85\\" data-v-57536c88=\\"\\"></line>
+            </g>
+          </g>
+        </g>
+      </svg></div>
+  </div>
+  <div class=\\"grid grid-cols-8 gap-4 border-b-2 bg-red-50\\">
+    <div class=\\"h-full justify-self-center\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 120 100\\" class=\\"h-full w-5\\">
+        <g>
+          <ellipse class=\\"fill-transparent stroke-black stroke-[6px]\\" cx=\\"54\\" cy=\\"50\\" rx=\\"50\\" ry=\\"25\\"></ellipse>
+          <g>
+            <circle class=\\"fill-slate-500 stroke-black stroke-[6px]\\" cx=\\"53\\" cy=\\"43\\" r=\\"18\\"></circle>
+            <circle class=\\"fill-white\\" cx=\\"60\\" cy=\\"38\\" r=\\"8\\"></circle>
+          </g>
+        </g>
+      </svg></div>
+    <div class=\\"col-span-5 ml-4\\">M25zigo2PGIz8BiXYjnulAL</div>
+    <div class=\\"justify-self-center\\">
+      <div></div>
+    </div>
+    <div class=\\"h-full justify-self-center\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 109.37 109.37\\" class=\\"w-5 h-full\\" data-v-57536c88=\\"\\">
+        <g data-v-57536c88=\\"\\">
+          <g data-v-57536c88=\\"\\">
+            <circle class=\\"cls-1\\" cx=\\"54.69\\" cy=\\"54.69\\" r=\\"54.69\\" data-v-57536c88=\\"\\"></circle>
+            <g data-v-57536c88=\\"\\">
+              <line class=\\"cls-2\\" x1=\\"32.52\\" y1=\\"32.52\\" x2=\\"76.85\\" y2=\\"76.85\\" data-v-57536c88=\\"\\"></line>
+              <line class=\\"cls-2\\" x1=\\"76.85\\" y1=\\"32.52\\" x2=\\"32.52\\" y2=\\"76.85\\" data-v-57536c88=\\"\\"></line>
+            </g>
+          </g>
+        </g>
+      </svg></div>
+  </div>
+  <div class=\\"grid grid-cols-8 gap-4 border-b-2\\">
+    <div></div>
+    <div class=\\"col-span-5 ml-4\\">pTzf9MBAJLPbn4ZeLX80bB3</div>
+    <div class=\\"justify-self-center\\">
+      <div></div>
+    </div>
+    <div class=\\"h-full justify-self-center\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 109.38 109.38\\" class=\\"w-5 h-full\\" data-v-34d8da4e=\\"\\">
+        <g data-v-34d8da4e=\\"\\">
+          <g data-v-34d8da4e=\\"\\">
+            <circle class=\\"cls-1\\" cx=\\"54.69\\" cy=\\"54.69\\" r=\\"54.69\\" data-v-34d8da4e=\\"\\"></circle>
+            <polyline class=\\"cls-2\\" points=\\"22.32 52.84 49.06 76.32 87.06 33.05\\" data-v-34d8da4e=\\"\\"></polyline>
+          </g>
+        </g>
+      </svg></div>
+  </div>
+  <div class=\\"grid grid-cols-8 gap-4 border-b-2\\">
+    <div></div>
+    <div class=\\"col-span-5 ml-4\\">gOt73aQs</div>
+    <div class=\\"justify-self-center\\">
+      <div></div>
+    </div>
+    <div class=\\"h-full justify-self-center\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 109.38 109.38\\" class=\\"w-5 h-full\\" data-v-34d8da4e=\\"\\">
+        <g data-v-34d8da4e=\\"\\">
+          <g data-v-34d8da4e=\\"\\">
+            <circle class=\\"cls-1\\" cx=\\"54.69\\" cy=\\"54.69\\" r=\\"54.69\\" data-v-34d8da4e=\\"\\"></circle>
+            <polyline class=\\"cls-2\\" points=\\"22.32 52.84 49.06 76.32 87.06 33.05\\" data-v-34d8da4e=\\"\\"></polyline>
+          </g>
+        </g>
+      </svg></div>
+  </div>
+</div>"
+`;
